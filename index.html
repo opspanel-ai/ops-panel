@@ -38,10 +38,10 @@
   .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
   header.bar { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.93); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
   .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 56px; }
-  .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+  .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; min-width: 0; overflow: hidden; }
   .brand small { display: block; font-weight: 400; font-size: 11px; color: var(--sub); line-height: 1.2; }
-  .lang { display: flex; gap: 4px; }
-  .lang button { font: inherit; font-size: 13px; padding: 4px 10px; border: 1px solid var(--line); background: #fff; color: var(--sub); border-radius: 999px; cursor: pointer; }
+  .lang { display: flex; gap: 4px; flex: 0 0 auto; }
+  .lang button { font: inherit; font-size: 13px; padding: 4px 10px; border: 1px solid var(--line); background: #fff; color: var(--sub); border-radius: 999px; cursor: pointer; white-space: nowrap; }
   .lang button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
   h1 { font-size: 36px; line-height: 1.28; margin: 52px 0 14px; letter-spacing: -0.025em; }
   h2 { font-size: 21px; margin: 56px 0 14px; padding-bottom: 8px; border-bottom: 1.5px solid var(--line); letter-spacing: -0.01em; }
@@ -110,6 +110,8 @@
   [hidden] { display: none !important; }
   @media (max-width: 680px) {
     h1 { font-size: 27px; margin-top: 32px; }
+    .brand { font-size: 14px; }
+    .brand small { font-size: 10px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
     .cols, .cols.two, .charts { grid-template-columns: 1fr; }
     .fields { grid-template-columns: 1fr 1fr; }
     .out { grid-template-columns: 1fr; }
