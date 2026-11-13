@@ -103,7 +103,10 @@
 
 <header class="bar">
   <div class="wrap">
-    <div class="brand">店舗運営パネル<small>Ops Panel — 業務パネルAI研究会</small></div>
+    <div class="brand">
+      <span data-brand="ja">店舗運営パネル<small>Ops Panel — 業務パネルAI研究会</small></span>
+      <span data-brand="en" hidden>Ops Panel<small>Daily numbers for restaurants — Ops Panel AI Lab</small></span>
+    </div>
     <div class="lang">
       <button type="button" data-lang="ja" aria-pressed="true">日本語</button>
       <button type="button" data-lang="en" aria-pressed="false">English</button>
@@ -311,6 +314,9 @@
     document.getElementById("ja").hidden = lang !== "ja";
     document.getElementById("en").hidden = lang !== "en";
     document.documentElement.lang = lang;
+    document.querySelectorAll("[data-brand]").forEach(function (s) {
+      s.hidden = s.dataset.brand !== lang;
+    });
     document.querySelectorAll(".lang button").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
     });
