@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>店舗運営パネル — 店舗の数字を、毎朝1枚で。 | Ops Panel</title>
+<meta name="description" content="POSレジとつないで、売上・原価・人件費・発注を自動でまとめ、毎朝スマホに届けます。海外の日本食レストラン2店舗で毎日稼働中。" />
+<meta property="og:title" content="店舗の数字を、毎朝1枚で。 / Your restaurant's numbers, on one page every morning." />
+<meta property="og:description" content="POSレジとつないで、売上・原価・人件費・発注を自動でまとめ、毎朝スマホに届けます。" />
+<meta property="og:type" content="website" />
+<meta name="robots" content="index,follow" />
+<!--
+  公開 LP (GitHub Pages)。営業資料 docs/sales/ops-panel-sheet.html (A4・PDF 配布用) と同じ内容を、
+  打診メール/DM から踏んでもらう 1 枚に組み直したもの。
+
+  約束 (2026-11-04 オーナー):
+  - 実在の店名・人名・取引先名・実売上は一切置かない。画面イメージはデモ (数値は架空)。
+  - 名乗りは屋号「業務パネルAI研究会」＋ ハンドル「アル / Al」。本名は出さない
+    (出るのは 入金・請求書・契約書 の 3 か所だけ)。
+  - 相場ツールは売らない (金商法 29 条)。この LP でも触れない。
+-->
+<style>
+  :root {
+    --ink: #1b1d21; --sub: #5b6069; --line: #e4e6ea; --bg: #fff; --soft: #fbfbfc;
+    --dark: #15181d; --ok: #2f9e68; --warn: #c8871f; --err: #d2554b; --accent: #1b5bd7;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui, -apple-system, sans-serif;
+    font-size: 16px; line-height: 1.75; -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+  header.bar {
+    position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.92);
+    backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+  }
+  .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 56px; }
+  .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+  .brand small { display: block; font-weight: 400; font-size: 11px; color: var(--sub); line-height: 1.2; }
+  .lang { display: flex; gap: 4px; }
+  .lang button {
+    font: inherit; font-size: 13px; padding: 4px 10px; border: 1px solid var(--line);
+    background: #fff; color: var(--sub); border-radius: 999px; cursor: pointer;
+  }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  h1 { font-size: 34px; line-height: 1.3; margin: 48px 0 12px; letter-spacing: -0.02em; }
+  h2 { font-size: 20px; margin: 48px 0 12px; padding-bottom: 8px; border-bottom: 1.5px solid var(--line); }
+  h3 { font-size: 16px; margin: 24px 0 6px; }
+  p { margin: 0 0 14px; }
+  .lead { font-size: 17px; color: var(--sub); margin-bottom: 28px; }
+  .cta {
+    display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+    font-weight: 700; padding: 14px 26px; border-radius: 10px; font-size: 16px;
+  }
+  .cta:hover { filter: brightness(1.08); }
+  .cta-note { font-size: 13px; color: var(--sub); margin-top: 10px; }
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .cols.two { grid-template-columns: repeat(2, 1fr); }
+  .box { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; background: var(--soft); }
+  .box b { display: block; margin-bottom: 6px; }
+  .box p { margin: 0; font-size: 14px; color: var(--sub); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+  th { color: var(--sub); font-weight: 600; font-size: 13px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr.total td { font-weight: 700; border-top: 1.5px solid var(--ink); }
+  .demo { background: var(--dark); color: #e9eaec; border-radius: 12px; padding: 20px; }
+  .demo .tag { font-size: 11px; letter-spacing: .08em; color: #8b93a1; text-transform: uppercase; }
+  .demo h3 { margin: 4px 0 14px; font-size: 18px; color: #fff; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi .l { font-size: 11px; color: #8b93a1; }
+  .kpi .v { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .demo .ok { color: #5fd49a; } .demo .warn { color: #f0b457; } .demo .err { color: #f2776f; }
+  .demo table { color: #c9ccd2; font-size: 14px; }
+  .demo th, .demo td { border-bottom: 1px solid #272c34; }
+  .demo th { color: #8b93a1; }
+  .bars { display: flex; align-items: flex-end; gap: 3px; height: 64px; margin-top: 14px; }
+  .bars span { flex: 1; background: #3a4150; border-radius: 2px; }
+  .bars span.hi { background: #5fd49a; }
+  ol.steps { padding-left: 20px; }
+  ol.steps li { margin-bottom: 10px; }
+  details { border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 10px 0 0; font-size: 15px; color: var(--sub); }
+  .note { font-size: 13px; color: #7b818b; }
+  .end { margin: 56px 0; padding: 28px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); text-align: center; }
+  footer { border-top: 1px solid var(--line); margin-top: 48px; padding: 24px 0 48px; font-size: 13px; color: var(--sub); }
+  footer dl { display: grid; grid-template-columns: 9em 1fr; gap: 6px 14px; margin: 0 0 14px; }
+  footer dt { color: #8b8f98; } footer dd { margin: 0; }
+  [hidden] { display: none !important; }
+  @media (max-width: 640px) {
+    h1 { font-size: 26px; margin-top: 32px; }
+    .cols, .cols.two { grid-template-columns: 1fr; }
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    footer dl { grid-template-columns: 1fr; }
+    .cta { display: block; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <div class="brand">店舗運営パネル<small>Ops Panel — 業務パネルAI研究会</small></div>
+    <div class="lang">
+      <button type="button" data-lang="ja" aria-pressed="true">日本語</button>
+      <button type="button" data-lang="en" aria-pressed="false">English</button>
+    </div>
+  </div>
+</header>
+
+<!-- ───────────────── 日本語 ───────────────── -->
+<main id="ja" class="wrap">
+  <h1>店舗の数字を、毎朝1枚で。</h1>
+  <p class="lead">
+    POSレジとつないで、売上・原価・人件費・発注を自動でまとめ、スマホに届けます。<br />
+    海外の日本食レストラン2店舗で毎日稼働しているものを、御社向けに設定してお渡しします。
+  </p>
+  <p>
+    <a class="cta" data-form href="#">無料で相談する（60〜90分）</a>
+  </p>
+  <p class="cta-note">初回のご相談は無料です。売り込みはしません。合わないと判断した場合はその場でお伝えします。</p>
+
+  <h2>よくある困りごと</h2>
+  <div class="cols">
+    <div class="box"><b>数字が翌月まで出ない</b><p>月末に会計へ出して、翌月半ばに結果を知る。手を打てる時期を過ぎている。</p></div>
+    <div class="box"><b>原価率がどんぶり</b><p>仕入れ値が変わっても売価は据え置き。どの品で損しているか誰も把握していない。</p></div>
+    <div class="box"><b>現場と言語が違う</b><p>日本人オーナーと現地スタッフで、同じ数字を同じ意味で共有できていない。</p></div>
+  </div>
+
+  <h2>お渡しするもの</h2>
+  <div class="demo">
+    <div class="tag">Daily report · 自動配信</div>
+    <h3>昨日の売上 — 11/03（火）</h3>
+    <div class="kpis">
+      <div class="kpi"><div class="l">売上</div><div class="v">¥486,200</div></div>
+      <div class="kpi"><div class="l">客数 / 客単価</div><div class="v">182 / ¥2,672</div></div>
+      <div class="kpi"><div class="l">原価率</div><div class="v warn">34.8%</div></div>
+      <div class="kpi"><div class="l">人件費率</div><div class="v ok">21.4%</div></div>
+    </div>
+    <div class="bars">
+      <span style="height:38%"></span><span style="height:52%"></span><span style="height:44%"></span>
+      <span style="height:61%"></span><span style="height:73%" class="hi"></span><span style="height:88%" class="hi"></span>
+      <span style="height:56%"></span><span style="height:47%"></span><span style="height:66%"></span>
+      <span style="height:81%" class="hi"></span><span style="height:59%"></span><span style="height:70%"></span>
+    </div>
+    <table style="margin-top:14px">
+      <tr><th>要対応</th><th class="num">内容</th></tr>
+      <tr><td>原価率が目標 30% を 4.8pt 超過</td><td class="num err">-¥23,300</td></tr>
+      <tr><td>在庫が切れそう（3品）</td><td class="num warn">発注推奨</td></tr>
+      <tr><td>目標まで（今月・残り27日）</td><td class="num">¥1,870,000</td></tr>
+    </table>
+  </div>
+  <p class="note" style="margin-top:10px">※ 上はデモ画面です。数値はすべて架空で、稼働中の店舗の実数値・店名は守秘のため記載していません。</p>
+
+  <h2>機能</h2>
+  <div class="cols">
+    <div class="box"><b>日次レポート自動配信</b><p>毎朝きまった時刻に、前日の売上・客数・原価率・人件費率を LINE / Telegram へ。日本語と現地語を併記。</p></div>
+    <div class="box"><b>原価・売価の管理</b><p>レシピ単位で原価を持ち、仕入れ値が動いたら原価率が崩れた品を自動で指摘。値上げ候補を一覧に。</p></div>
+    <div class="box"><b>発注・在庫</b><p>過去の出数から必要量を出し、切れそうな品を発注リストに。仕入れ先ごとに分けて送信。</p></div>
+    <div class="box"><b>損益（P/L）</b><p>売上・原価・人件費・家賃・光熱費を1画面に。損益分岐点と、今月の着地見込みを毎日更新。</p></div>
+    <div class="box"><b>スタッフ・シフト</b><p>シフト日数と売上から人件費率を出し、インセンティブの配分案まで。個人名は権限のある人だけに表示。</p></div>
+    <div class="box"><b>多言語</b><p>画面もレポートも日本語・英語・現地語を切り替え。オーナーと現地スタッフが同じ数字を見られます。</p></div>
+  </div>
+
+  <h2>料金</h2>
+  <table>
+    <tr><th>項目</th><th>内容</th><th class="num">金額（税別）</th></tr>
+    <tr><td>初期導入</td><td>POS連携・原価データ取込・レポート設計・初期設定</td><td class="num">¥200,000</td></tr>
+    <tr><td>月額（1店舗）</td><td>自動配信・保守・軽微な改修・サーバー費込み</td><td class="num">¥30,000 / 月</td></tr>
+    <tr><td>2店舗目以降</td><td>同一オーナー様の追加店舗</td><td class="num">¥15,000 / 月</td></tr>
+    <tr><td>個別開発</td><td>自社独自の帳票・既存システム連携など</td><td class="num">¥10,000 / 時</td></tr>
+    <tr class="total"><td>初年度の目安</td><td>1店舗・初期＋月額12か月</td><td class="num">¥560,000</td></tr>
+  </table>
+  <p class="note" style="margin-top:10px">※ 最初の1か月はお試し（初期費用のみ・月額無料）。合わなければそこで終了し、データはすべてお渡しします。</p>
+
+  <h2>導入の流れ</h2>
+  <ol class="steps">
+    <li><b>ご相談（60〜90分・無料）</b> — いま何を手で集計しているか、どこで時間が溶けているかを伺います。</li>
+    <li><b>お見積もり</b> — 伺った内容で、最初に作る1本と金額・期間をお出しします。3営業日以内。</li>
+    <li><b>初期導入（2〜4週間）</b> — POS連携・原価データの取り込み・レポート設計。ここまでで毎朝の配信が始まります。</li>
+    <li><b>お試し1か月 → 継続</b> — 合わなければ終了。データは全部お渡しします。</li>
+  </ol>
+
+  <h2>よくあるご質問</h2>
+  <details><summary>うちのPOSレジでも使えますか？</summary><p>データを書き出せるPOSであれば接続できます。接続方法が無い場合でも、日次の書き出しファイルを読む形で動かせることが多いです。ご相談時に、お使いのPOS名を教えてください。</p></details>
+  <details><summary>データは安全ですか？</summary><p>お預かりするのは売上・原価・シフトなどの業務データです。目的外に使わず、第三者に渡しません。終了時はすべてお渡ししたうえで削除します。詳細は契約書に明記します。</p></details>
+  <details><summary>いつでも解約できますか？</summary><p>できます。月額は当月末までで、違約金はありません。お渡ししたデータとレポートはそのままお使いいただけます。</p></details>
+  <details><summary>スタッフが日本語を読めません。</summary><p>画面もレポートも、日本語・英語・現地語を切り替えられます。同じ数字を同じ意味で見てもらうことが目的の機能です。</p></details>
+  <details><summary>誰が作っていますか？</summary><p>個人の開発者（屋号：業務パネルAI研究会）です。大きな会社ではないぶん、追加や変更は数日単位で反映できます。実際に海外の日本食レストラン2店舗で、毎日このパネルが動いています。</p></details>
+
+  <div class="end">
+    <p><b>まずは、いま何を手で集計しているかだけ教えてください。</b></p>
+    <p><a class="cta" data-form href="#">無料で相談する</a></p>
+    <p class="cta-note" style="margin-bottom:0">フォームは1分で終わります。24時間以内にご返信します。</p>
+  </div>
+</main>
+
+<!-- ───────────────── English ───────────────── -->
+<main id="en" class="wrap" lang="en" hidden>
+  <h1>Your restaurant's numbers, on one page every morning.</h1>
+  <p class="lead">
+    Connected to your POS, it compiles sales, food cost, labour and purchasing automatically and sends it to your phone.<br />
+    Already running daily at two Japanese restaurants overseas — we configure the same system for you.
+  </p>
+  <p>
+    <a class="cta" data-form href="#">Book a free consultation (60–90 min)</a>
+  </p>
+  <p class="cta-note">The first consultation is free and there is no sales pitch. If it is not a fit, we will tell you so on the call.</p>
+
+  <h2>Problems we hear</h2>
+  <div class="cols">
+    <div class="box"><b>Numbers arrive too late</b><p>Books close at month end and results land mid-next-month — long after anything could be fixed.</p></div>
+    <div class="box"><b>Food cost is a guess</b><p>Supplier prices move, menu prices do not. Nobody knows which dishes lose money.</p></div>
+    <div class="box"><b>Owner and floor speak different languages</b><p>The same figure means different things to the owner and the local team.</p></div>
+  </div>
+
+  <h2>What you get</h2>
+  <div class="demo">
+    <div class="tag">Daily report · delivered automatically</div>
+    <h3>Yesterday — Tue, Nov 3</h3>
+    <div class="kpis">
+      <div class="kpi"><div class="l">Sales</div><div class="v">¥486,200</div></div>
+      <div class="kpi"><div class="l">Covers / avg</div><div class="v">182 / ¥2,672</div></div>
+      <div class="kpi"><div class="l">Food cost</div><div class="v warn">34.8%</div></div>
+      <div class="kpi"><div class="l">Labour</div><div class="v ok">21.4%</div></div>
+    </div>
+    <div class="bars">
+      <span style="height:38%"></span><span style="height:52%"></span><span style="height:44%"></span>
+      <span style="height:61%"></span><span style="height:73%" class="hi"></span><span style="height:88%" class="hi"></span>
+      <span style="height:56%"></span><span style="height:47%"></span><span style="height:66%"></span>
+      <span style="height:81%" class="hi"></span><span style="height:59%"></span><span style="height:70%"></span>
+    </div>
+    <table style="margin-top:14px">
+      <tr><th>Needs attention</th><th class="num">Impact</th></tr>
+      <tr><td>Food cost 4.8pt above the 30% target</td><td class="num err">-¥23,300</td></tr>
+      <tr><td>3 items about to run out</td><td class="num warn">Order now</td></tr>
+      <tr><td>Gap to this month's target (27 days left)</td><td class="num">¥1,870,000</td></tr>
+    </table>
+  </div>
+  <p class="note" style="margin-top:10px">* Demo screen. Every figure is fictional; live client names and real figures are withheld under confidentiality.</p>
+
+  <h2>Features</h2>
+  <div class="cols">
+    <div class="box"><b>Automatic daily report</b><p>Every morning: yesterday's sales, covers, food cost and labour, pushed to LINE / Telegram in two languages.</p></div>
+    <div class="box"><b>Recipe costing</b><p>Cost held per recipe; when a supplier price moves, dishes that break the target margin are flagged.</p></div>
+    <div class="box"><b>Purchasing &amp; stock</b><p>Required quantities from past usage, a reorder list for items about to run out, split per supplier.</p></div>
+    <div class="box"><b>P&amp;L</b><p>Sales, cost, labour, rent and utilities on one screen, with break-even and a daily updated month-end forecast.</p></div>
+    <div class="box"><b>Staff &amp; shifts</b><p>Labour ratio from shifts and sales, plus an incentive split proposal. Names visible only to authorised users.</p></div>
+    <div class="box"><b>Multilingual</b><p>Screens and reports in Japanese, English and the local language, so owner and staff read the same numbers.</p></div>
+  </div>
+
+  <h2>Pricing</h2>
+  <table>
+    <tr><th>Item</th><th>Scope</th><th class="num">Price (excl. tax)</th></tr>
+    <tr><td>Setup</td><td>POS integration, cost data import, report design, configuration</td><td class="num">¥200,000</td></tr>
+    <tr><td>Monthly (1 location)</td><td>Automated delivery, maintenance, minor changes, hosting</td><td class="num">¥30,000 / mo</td></tr>
+    <tr><td>Additional location</td><td>Same owner, extra site</td><td class="num">¥15,000 / mo</td></tr>
+    <tr><td>Custom work</td><td>Bespoke reports, integration with existing systems</td><td class="num">¥10,000 / hr</td></tr>
+    <tr class="total"><td>First year</td><td>One location, setup + 12 months</td><td class="num">¥560,000</td></tr>
+  </table>
+  <p class="note" style="margin-top:10px">* First month is a trial: setup fee only, no monthly charge. If it does not fit we stop there and hand over all of your data.</p>
+
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li><b>Free consultation (60–90 min)</b> — we go through what you currently compile by hand and where the hours go.</li>
+    <li><b>Proposal</b> — the first report to build, the price and the timeline, within three business days.</li>
+    <li><b>Setup (2–4 weeks)</b> — POS integration, cost data import, report design. The morning delivery starts here.</li>
+    <li><b>One month trial, then continue</b> — if it does not fit, we stop and hand over all of your data.</li>
+  </ol>
+
+  <h2>FAQ</h2>
+  <details><summary>Will it work with our POS?</summary><p>If your POS can export data, we can connect to it. Even without an API, a daily export file is usually enough. Tell us the POS name on the call.</p></details>
+  <details><summary>Is our data safe?</summary><p>We hold operational data only — sales, costs, shifts. It is never used for anything else and never passed to a third party. On termination we hand everything over and delete our copy. This is written into the contract.</p></details>
+  <details><summary>Can we cancel anytime?</summary><p>Yes. The monthly fee runs to the end of that month and there is no cancellation penalty. The data and reports stay yours.</p></details>
+  <details><summary>Our staff do not read Japanese.</summary><p>Screens and reports switch between Japanese, English and the local language. Letting the owner and the floor read the same number is the point of the feature.</p></details>
+  <details><summary>Who builds it?</summary><p>An independent developer (trading as Ops Panel AI Lab). Being small is the advantage: changes ship in days, not quarters. The same panel runs every day at two Japanese restaurants overseas.</p></details>
+
+  <div class="end">
+    <p><b>Start by telling us what you currently compile by hand.</b></p>
+    <p><a class="cta" data-form href="#">Book a free consultation</a></p>
+    <p class="cta-note" style="margin-bottom:0">The form takes a minute. We reply within 24 hours.</p>
+  </div>
+</main>
+
+<footer class="wrap">
+  <dl>
+    <dt>屋号 / Trading name</dt><dd>業務パネルAI研究会（Ops Panel AI Lab）</dd>
+    <dt>担当 / Contact</dt><dd>アル（Al）</dd>
+    <dt>メール / Email</dt><dd><a href="mailto:opspanel.ai@gmail.com">opspanel.ai@gmail.com</a></dd>
+    <dt>事業内容 / Services</dt><dd>店舗向け業務システムの受託開発・導入支援・保守 / Custom back-office systems for restaurants and retail</dd>
+    <dt>対価 / Fees</dt><dd>上記「料金」のとおり（税別）。別途かかる費用はありません。</dd>
+    <dt>提供時期 / Delivery</dt><dd>初期導入は契約から2〜4週間。月額サービスは導入完了日から。</dd>
+    <dt>支払方法 / Payment</dt><dd>銀行振込またはクレジットカード（請求書払い・前払い）</dd>
+    <dt>解約 / Cancellation</dt><dd>役務の性質上、提供後の返金はいたしません。月額は当月末をもって解約でき、違約金はありません。</dd>
+  </dl>
+  <p class="note">
+    事業者の氏名・住所・電話番号は、ご請求をいただければ遅滞なく開示します（上記メール宛）。<br />
+    Full legal name, address and phone number are disclosed without delay on request.
+  </p>
+  <p class="note">© 2026 業務パネルAI研究会 / Ops Panel AI Lab</p>
+</footer>
+
+<script>
+  // 申込フォーム (Apps Script)。経路ごとの utm_campaign で、どこから来た申込かを後で数える。
+  var FORM = "https://script.google.com/macros/s/AKfycbyze-C7wU03Enq9zWwZOngKbUuXsBwH5A63jwLLIrgGcvC7epbwLWSsewTg_XjaMhNdKA/exec";
+
+  function setLang(lang) {
+    document.getElementById("ja").hidden = lang !== "ja";
+    document.getElementById("en").hidden = lang !== "en";
+    document.documentElement.lang = lang;
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+    });
+    document.querySelectorAll("a[data-form]").forEach(function (a) {
+      a.href = FORM + "?utm_campaign=lp-" + lang;
+    });
+    try { localStorage.setItem("opspanel.lang", lang); } catch (e) {}
+  }
+
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () { setLang(b.dataset.lang); });
+  });
+
+  // 相手はフィリピンの店が中心なので、日本語環境以外は英語で開く。一度選べばその選択を覚える。
+  var saved = null;
+  try { saved = localStorage.getItem("opspanel.lang"); } catch (e) {}
+  var byUrl = new URLSearchParams(location.search).get("lang");
+  var byNav = (navigator.language || "").toLowerCase().indexOf("ja") === 0 ? "ja" : "en";
+  setLang(byUrl === "ja" || byUrl === "en" ? byUrl : (saved === "ja" || saved === "en" ? saved : byNav));
+</script>
+
+</body>
+</html>
