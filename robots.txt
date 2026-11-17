@@ -1,2 +1,20 @@
+# 検索結果にはまだ載せない (中立な独自ドメインへ移すまで)。
 User-agent: *
 Disallow: /
+
+# ただし広告の審査とリンクプレビューのクローラだけは通す。
+# ここを塞いだままだと、広告のサムネイルが出ない・審査で「ページを確認できない」で止まる。
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: AdsBot-Google-Mobile
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /

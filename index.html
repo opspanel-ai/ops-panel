@@ -8,6 +8,20 @@
 <meta property="og:title" content="集計をやめて、毎朝1枚で。 / Stop compiling. Read one page every morning." />
 <meta property="og:description" content="売上・原価・人件費・発注を自動でまとめて毎朝スマホへ。導入でいくら浮くのかを、その場で試算できます。" />
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content="業務パネルAI研究会 / Ops Panel AI Lab" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:locale:alternate" content="en_US" />
+<!-- 独自ドメインに移すときは、この 4 行の絶対 URL だけを書き換える (og:url / canonical / og:image / twitter:image)。 -->
+<meta property="og:url" content="https://tgkmkg02-create.github.io/ops-panel/" />
+<link rel="canonical" href="https://tgkmkg02-create.github.io/ops-panel/" />
+<meta property="og:image" content="https://tgkmkg02-create.github.io/ops-panel/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="店舗運営パネルのデモ画面。昨日の売上・原価率・人件費率・発注アラートが1枚に並ぶ。" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="集計をやめて、毎朝1枚で。" />
+<meta name="twitter:description" content="POSレジとつないで売上・原価・人件費・発注を自動でまとめ、毎朝スマホに届けます。" />
+<meta name="twitter:image" content="https://tgkmkg02-create.github.io/ops-panel/og.png" />
 <meta name="robots" content="index,follow" />
 <!--
   公開 LP (GitHub Pages)。正本はこのファイル (mission-control/docs/sales/site/index.html)。
@@ -22,6 +36,16 @@
   「AI の勉強もできる、はどうか」。
   → 試算ツール (入力に連動する 2 つのグラフ)・デモのグラフ 2 枚・AI 伴走プランを追加。
   数字はすべて「入力値から機械的に計算した試算」であることを画面に明記する。盛らない。
+
+  2026-11-17 オーナー要望:「HP を編集して広告をかけていきたい」。
+  → 広告に出す前提の土台だけを入れた。文面と価格は触っていない。
+    - OGP / Twitter カード一式 + og.png (1200x630, 版下は og.html、生成は scripts/og-render.mjs)。
+      これが無いと Meta・X・LINE でサムネイルが出ず、広告のクリック率が落ちる。
+    - 広告の経路 (utm_source / medium / campaign, gclid 等) を申込フォームへ引き継ぐ。
+      Apps Script が読むのは utm_campaign だけなので、そこに畳んでシートの「経路」列に残す。
+    - GA4 / Google 広告タグの受け口 (window.MEASURE)。ID が空なら外部通信ゼロのまま。
+    - robots.txt は検索を塞いだまま、広告審査とプレビューのクローラだけ通す。
+  独自ドメインへ移すときに直すのは、上の og:url / canonical / og:image / twitter:image の 4 行だけ。
 -->
 <style>
   :root {
@@ -120,6 +144,40 @@
     .cta { display: block; text-align: center; }
   }
 </style>
+
+<!--
+  計測 (GA4 / Google 広告)。ID を入れるまで外部スクリプトを一切読み込まない =
+  広告を出すまでは通信ゼロ・Cookie ゼロのまま。広告を始める日に下の 3 つを埋めるだけでよい。
+    ga4   : GA4 の測定 ID        例 "G-XXXXXXXXXX"
+    ads   : Google 広告のタグ ID 例 "AW-XXXXXXXXX"
+    label : 申込コンバージョンの  例 "AbC-dEfGhIjKlMnOpQ"
+-->
+<script>
+  window.MEASURE = { ga4: "", ads: "", label: "" };
+  (function () {
+    "use strict";
+    var m = window.MEASURE;
+    var ids = [m.ga4, m.ads].filter(Boolean);
+    if (!ids.length) { window.opsPanelLead = function () {}; return; }
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { window.dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag("js", new Date());
+    ids.forEach(function (id) { gtag("config", id); });
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(ids[0]);
+    document.head.appendChild(s);
+    // 申込フォームを開いたとき 1 回だけ送る。二重計上しない。
+    var sent = false;
+    window.opsPanelLead = function () {
+      if (sent) return;
+      sent = true;
+      gtag("event", "generate_lead", { form: "consultation" });
+      if (m.ads && m.label) gtag("event", "conversion", { send_to: m.ads + "/" + m.label });
+    };
+  })();
+</script>
 </head>
 <body>
 
@@ -627,13 +685,30 @@
     $('[data-chart="payback"]', root).innerHTML = chartPayback(saveMonth, feeMonth, lang);
   }
 
+  // 広告から来たときの経路を、そのまま申込フォームへ渡す。Apps Script が読むのは utm_campaign だけ
+  // (シートの「経路」列、100 字で切られる) なので、媒体と流入元はそこに畳んで入れる。
+  // クリック ID は今は使われないが、後で広告側の成果と突き合わせられるよう一緒に送っておく。
+  function formUrl(lang) {
+    var q = new URLSearchParams(location.search);
+    var camp = q.get("utm_campaign") || "lp-" + lang;
+    var src = q.get("utm_source");
+    if (src) camp += "/" + src + (q.get("utm_medium") ? "-" + q.get("utm_medium") : "");
+    var p = new URLSearchParams();
+    p.set("utm_campaign", camp);
+    ["gclid", "wbraid", "gbraid", "fbclid", "ttclid", "msclkid"].forEach(function (k) {
+      var v = q.get(k);
+      if (v) p.set(k, v);
+    });
+    return FORM + "?" + p.toString();
+  }
+
   function setLang(lang) {
     document.getElementById("ja").hidden = lang !== "ja";
     document.getElementById("en").hidden = lang !== "en";
     document.documentElement.lang = lang;
     $$("[data-brand]").forEach(function (s) { s.hidden = s.dataset.brand !== lang; });
     $$(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lang === lang)); });
-    $$("a[data-form]").forEach(function (a) { a.href = FORM + "?utm_campaign=lp-" + lang; });
+    $$("a[data-form]").forEach(function (a) { a.href = formUrl(lang); });
     var root = document.getElementById(lang);
     render(root, lang);
     $('[data-chart="foodcost"]', root).innerHTML = chartFoodcost(lang);
@@ -647,6 +722,14 @@
   $$("[data-calc]").forEach(function (root) {
     var main = root.closest("main");
     root.addEventListener("input", function () { render(root, main.id); });
+  });
+
+  // 申込フォームを開いた回数をコンバージョンとして数える。計測 ID が未設定なら何も起きない。
+  // (申込の真実はスプレッドシートの行。これは広告側に「どのクリックが申込に進んだか」を返すための信号)
+  $$("a[data-form]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      if (typeof window.opsPanelLead === "function") window.opsPanelLead();
+    });
   });
 
   // 相手は海外の店が中心なので、日本語環境以外は英語で開く。一度選べばその選択を覚える。
