@@ -25,7 +25,7 @@
 <meta name="robots" content="index,follow" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
 
 <!--
   公開 LP (GitHub Pages)。正本はこのファイル (mission-control/docs/sales/site/index.html)。
@@ -52,471 +52,389 @@
   独自ドメインへ移すときに直すのは、上の og:url / canonical / og:image / twitter:image の 4 行だけ。
 -->
 <style>
-  /* ── 感熱ロール紙 1 本。暗いカウンターの上に、今朝printされた紙が流れている。
-       インクは 3 つだけ: 黒 (実績) / 赤 (漏れている金) / かすれ (印字できなかったもの)。 */
+  /* ── 日本の B2B 標準形を、全力で。
+       参照の配色・ロゴ・レイアウトは使わない。格だけ合わせる。 */
   :root {
-    --paper: #faf7f0;
-    --paper-2: #f1ece0;
-    --ink: #1b1915;
-    --ink-2: #6b6658;
-    --rule: #c9c1ae;
-    --rule-2: #e2dbcb;
-    --red: #c3372a;
-    --counter: #17140f;
-    --strip: 760px;
+    --navy: #0d2a5c;
+    --blue: #2259e0;
+    --blue-d: #17419f;
+    --blue-l: #4f86f7;
+    --sky: #e8f0ff;
+    --band: #f3f7fe;
+    --accent: #c44410;
+    --accent-d: #b8380a;
+    --ink: #15203a;
+    --sub: #5b6880;
+    --line: #dfe6f3;
+    --ok: #0b7a4d;
+    --warn: #c62f2f;
+    --white: #fff;
+    --shadow-s: 0 1px 2px rgba(0, 0, 0, .05), 0 4px 14px rgba(0, 0, 0, .06);
+    --shadow-m: 0 2px 6px rgba(0, 0, 0, .06), 0 14px 34px rgba(0, 0, 0, .10);
+    --shadow-l: 0 4px 10px rgba(0, 0, 0, .07), 0 28px 60px rgba(0, 0, 0, .15);
+    --r: 14px;
   }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; background: var(--counter); }
-
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
   body {
     margin: 0;
-    background: var(--counter);
+    background: var(--white);
     color: var(--ink);
-    font-family: "Zen Kaku Gothic New", "Yu Gothic", "Hiragino Kaku Gothic ProN", system-ui, sans-serif;
-    font-size: 16.5px;
+    font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", system-ui, sans-serif;
+    font-size: 16px;
     line-height: 1.85;
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── ロール紙本体 ───────────────────────────── */
-  .roll {
-    max-width: var(--strip);
-    margin: 0 auto;
-    background: var(--paper);
-    box-shadow: 0 0 0 1px rgba(27, 25, 21, .10), 0 18px 48px rgba(0, 0, 0, .55);
-    position: relative;
-  }
-  /* 上端・下端のギザ (ティアオフ)。紙の切れ目そのもの */
-  /* 紙の切れ目。等間隔の歯はバーコードに見えるので、深さの違う破れ縁を作図して敷く */
-  .roll::before,
-  .roll::after {
-    content: "";
-    display: block;
-    height: 12px;
-    background-repeat: repeat-x;
-    background-size: 140px 12px;
-    position: relative;
-  }
-  .roll::before { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='12' viewBox='0 0 140 12'><path d='M0 0 L0.0 4.0 L4.9 1.2 L11.8 1.2 L18.1 1.2 L21.4 1.3 L24.6 1.2 L28.1 1.2 L33.6 3.9 L37.3 1.6 L44.1 5.4 L50.6 4.5 L59.4 1.2 L67.6 1.2 L71.4 1.2 L76.3 3.9 L80.4 4.6 L87.2 3.5 L93.5 1.2 L96.9 1.2 L103.9 1.2 L108.8 1.9 L114.5 1.2 L122.3 2.9 L126.8 3.5 L132.9 6.7 L140.0 4.0 L140 0 Z' fill='%2317140f'/></svg>"); }
-  .roll::after { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='12' viewBox='0 0 140 12'><path d='M0 12 L0.0 4.0 L8.5 7.8 L16.9 4.3 L23.5 3.7 L29.6 1.2 L33.8 1.2 L38.1 1.2 L41.3 1.2 L48.5 1.2 L54.6 3.2 L59.8 1.2 L67.5 1.9 L74.4 2.9 L83.2 1.7 L90.8 1.2 L97.2 2.5 L102.1 1.2 L107.9 3.0 L114.5 2.6 L121.3 1.2 L125.4 1.2 L133.3 1.2 L137.0 1.2 L140.0 4.0 L140 12 Z' fill='%2317140f'/></svg>"); }
+  .inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
 
-  .wrap { padding: 0 44px; }
-
-  /* ── プリンタヘッド (ヘッダ) ──────────────────── */
+  /* ── ヘッダ ─────────────────────────────── */
   header.bar {
     position: sticky;
     top: 0;
-    z-index: 10;
-    background: var(--paper);
-    border-bottom: 1px solid var(--ink);
+    z-index: 50;
+    background: rgba(255, 255, 255, .94);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--line);
   }
-  header.bar .wrap {
+  header.bar .inner {
+    flex-wrap: nowrap;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    min-height: 54px;
-    padding-top: 7px;
-    padding-bottom: 7px;
+    gap: 20px;
+    min-height: 68px;
+    max-width: 1180px;
   }
-  .brand {
-    font-family: "DotGothic16", "Yu Gothic", monospace;
-    font-size: 15px;
-    line-height: 1.25;
-    letter-spacing: .04em;
-    min-width: 0;
+  .brand { flex: 0 0 auto; font-weight: 900; font-size: 17px; line-height: 1.2; letter-spacing: .01em; color: var(--navy); white-space: nowrap; }
+  .brand small { display: block; font-weight: 500; font-size: 12px; color: var(--sub); letter-spacing: .02em; }
+  .nav[hidden] { display: none; }
+  .nav { display: flex; flex: 1 1 auto; min-width: 0; gap: 16px; margin-left: 10px; }
+  .nav a {
+    font-size: 14px; font-weight: 700; color: var(--ink); text-decoration: none;
+    padding: 6px 0; border-bottom: 2px solid transparent; white-space: nowrap;
   }
-  .brand small {
-    display: block;
-    font-size: 12px;
-    letter-spacing: .08em;
-    color: var(--ink-2);
-    text-transform: uppercase;
-  }
-  .lang { display: flex; flex: 0 0 auto; border: 1px solid var(--ink); }
+  .nav a:hover { color: var(--blue); border-bottom-color: var(--blue); }
+  .bar-right { flex: 0 0 auto; margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .tel { flex: 0 0 auto; text-align: right; line-height: 1.3; white-space: nowrap; }
+  .tel b { display: block; font-size: 15px; font-weight: 900; color: var(--navy); letter-spacing: .01em; }
+  .tel span { font-size: 12px; color: var(--sub); }
+  .tel span[hidden] { display: none; }
+  .lang { flex: 0 0 auto; display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
   .lang button {
-    font: inherit;
-    font-family: "DotGothic16", monospace;
-    font-size: 12.5px;
-    letter-spacing: .06em;
-    padding: 5px 11px;
-    border: 0;
-    background: transparent;
-    color: var(--ink-2);
-    cursor: pointer;
-    line-height: 1.3;
+    font: inherit; font-size: 12px; font-weight: 700; padding: 5px 12px;
+    border: 0; background: var(--white); color: var(--sub); cursor: pointer; line-height: 1.6;
   }
-  .lang button + button { border-left: 1px solid var(--ink); }
-  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
-  .lang button:hover { color: var(--ink); }
-  .lang button[aria-pressed="true"]:hover { color: var(--paper); }
+  .lang button[aria-pressed="true"] { background: var(--navy); color: var(--white); }
 
-  /* ── 印字の見出し ───────────────────────────── */
-  h1 {
-    font-family: "DotGothic16", "Yu Gothic", monospace;
-    font-size: clamp(30px, 5.6vw, 50px);
-    line-height: 1.26;
-    letter-spacing: -0.005em;
-    font-weight: 400;
-    margin: 46px 0 10px;
-    text-wrap: balance;
-  }
-  /* 日付行。レシートは必ず日付から始まる */
-  .issued {
-    font-family: "DotGothic16", monospace;
-    font-size: 12.5px;
-    letter-spacing: .05em;
-    color: var(--ink-2);
-    margin: 0 0 26px;
-    padding-bottom: 14px;
-    border-bottom: 1px dashed var(--rule);
-  }
-  h2 {
-    font-family: "DotGothic16", "Yu Gothic", monospace;
-    font-weight: 400;
-    font-size: 21px;
-    letter-spacing: .02em;
-    margin: 0 0 18px;
-    padding-top: 16px;
-  }
-  /* 節の切れ目 = 紙の切り取り線 */
-  .cut {
-    margin: 54px 0 0;
-    border: 0;
-    border-top: 1px dashed var(--rule);
-    position: relative;
-  }
-  h3 { font-size: 16px; margin: 22px 0 6px; }
-  p { margin: 0 0 16px; }
-  .lead { font-size: 18px; color: var(--ink-2); margin-bottom: 30px; max-width: 42em; }
-  .lead b { color: var(--ink); font-weight: 700; }
-  b { font-weight: 700; }
-
-  /* ── 折り返しの中に刷られる 4 つの数字 ───────────── */
-  .fold {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px 18px;
-    border-top: 1px solid var(--ink);
-    border-bottom: 1px dashed var(--rule);
-    padding: 14px 0 12px;
-    margin: 0 0 26px;
-  }
-  .fold-f { display: flex; flex-direction: column; gap: 1px; }
-  .fold-f .l { font-size: 12.5px; color: var(--ink-2); letter-spacing: .03em; }
-  .fold-f .n {
-    font-family: "DotGothic16", monospace;
-    font-size: 25px;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.3;
-  }
-  .fold-f .n.red { color: var(--red); }
-  .fold-note { grid-column: 1 / -1; margin: 9px 0 0; font-size: 12.5px; color: var(--ink-2); }
-
-  /* ── 印字されたボタン (黒ベタ反転印字) ───────────── */
+  /* ── ボタン ─────────────────────────────── */
   .cta {
-    display: inline-block;
-    background: var(--ink);
-    color: var(--paper);
-    text-decoration: none;
-    font-family: "DotGothic16", monospace;
-    font-size: 17px;
-    letter-spacing: .04em;
-    padding: 15px 30px;
-    border: 0;
-    transition: background 140ms ease-out;
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-d));
+    color: var(--white); text-decoration: none; font-weight: 900; font-size: 19px;
+    padding: 17px 34px; border-radius: 999px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .14), 0 12px 26px rgba(0, 0, 0, .20);
+    transition: transform 160ms cubic-bezier(.16, 1, .3, 1), box-shadow 160ms ease-out, filter 160ms ease-out;
   }
-  .cta:hover { background: var(--red); }
-  .cta-note { font-size: 13.5px; color: var(--ink-2); margin-top: 12px; }
+  .cta::after {
+    content: ""; width: 7px; height: 7px; flex: 0 0 auto;
+    border-top: 2px solid currentColor; border-right: 2px solid currentColor;
+    transform: rotate(45deg); margin-left: 2px;
+  }
+  .cta:hover { transform: translateY(-2px); filter: brightness(1.10); box-shadow: 0 4px 8px rgba(0, 0, 0, .20), 0 18px 34px rgba(0, 0, 0, .26); }
+  .cta:active { transform: translateY(0); }
+  .cta.sm { flex: 0 0 auto; font-size: 14px; padding: 11px 20px; white-space: nowrap; box-shadow: 0 2px 10px rgba(0, 0, 0, .20); }
+  .cta-note { font-size: 13px; color: var(--sub); margin-top: 14px; }
 
-  /* ── 明細行 (箱ではなく、印字された行) ─────────── */
-  .cols { margin: 0; }
+  /* ── ヒーロー ───────────────────────────── */
+  .hero {
+    background:
+      radial-gradient(1000px 420px at 82% 8%, rgba(79, 134, 247, .20), transparent 62%),
+      linear-gradient(170deg, #eaf2ff 0%, #f6faff 58%, var(--white) 100%);
+    border-bottom: 1px solid var(--line);
+    padding: 58px 0 64px;
+  }
+  .hero .inner { display: grid; grid-template-columns: 1.08fr .92fr; gap: 46px; align-items: center; max-width: 1180px; }
+  .hero h1 {
+    font-size: clamp(31px, 3.5vw, 47px); font-weight: 900; line-height: 1.34;
+    letter-spacing: -0.015em; color: var(--navy); margin: 0 0 18px; text-wrap: balance;
+  }
+  .hero h1 em { font-style: normal; color: var(--blue); }
+  .hero .lead { font-size: 17px; color: var(--sub); margin: 0 0 26px; max-width: 34em; }
+  .hero .lead b { color: var(--ink); font-weight: 700; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 22px; padding: 0; list-style: none; }
+  .badges li {
+    font-size: 12.5px; font-weight: 700; color: var(--blue-d);
+    background: var(--white); border: 1px solid #c9dcff; border-radius: 999px; padding: 5px 13px;
+  }
+
+  /* ヒーローの作図（毎朝届く1枚を実機で見せる） */
+  .shot { position: relative; justify-self: center; width: 100%; max-width: 380px; }
+  .phone {
+    background: var(--white); border-radius: 26px; padding: 14px;
+    box-shadow: var(--shadow-l); border: 1px solid var(--line);
+  }
+  .phone-screen { background: #f7f9fd; border-radius: 16px; overflow: hidden; }
+  .phone-top {
+    background: linear-gradient(135deg, #10306f, var(--blue-d) 55%, #1f52cc);
+    color: var(--white); padding: 14px 16px 15px;
+  }
+  .phone-top .t { font-size: 12px; color: #d9e5ff; letter-spacing: .04em; font-weight: 700; }
+  .phone-top .d { font-size: 17px; font-weight: 900; line-height: 1.3; margin-top: 2px; }
+  .phone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); }
+  .phone-grid div { background: var(--white); padding: 11px 14px; }
+  .phone-grid .l { font-size: 12px; color: var(--sub); font-weight: 700; }
+  .phone-grid .v { font-size: 19px; font-weight: 900; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+  .phone-grid .v.warn { color: var(--warn); }
+  .phone-grid .v.ok { color: var(--ok); }
+  .phone-list { background: var(--white); padding: 12px 14px 14px; border-top: 1px solid var(--line); }
+  .phone-list .h { font-size: 12px; font-weight: 900; color: var(--sub); letter-spacing: .05em; margin-bottom: 7px; }
+  .phone-list p {
+    display: flex; justify-content: space-between; gap: 10px; margin: 0 0 6px;
+    font-size: 12.5px; line-height: 1.5;
+  }
+  .phone-list p span:last-child { font-weight: 900; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .phone-list .neg span:last-child { color: var(--warn); }
+  .shot-tag {
+    position: absolute; top: -12px; right: -6px; z-index: 2;
+    background: var(--navy); color: var(--white); font-size: 12px; font-weight: 900;
+    letter-spacing: .06em; padding: 6px 13px; border-radius: 999px; box-shadow: var(--shadow-s);
+  }
+  .shot-cap { text-align: center; font-size: 12px; color: var(--sub); margin: 12px 0 0; }
+
+  /* ── セクション ─────────────────────────── */
+  .sec { padding: 72px 0; }
+  .sec.alt { background: var(--band); }
+  .sec > .inner > h2 {
+    font-size: clamp(24px, 2.4vw, 32px); font-weight: 900; line-height: 1.4;
+    letter-spacing: -0.01em; color: var(--navy); text-align: center; margin: 0 0 12px;
+  }
+  .sec > .inner > h2 + p { text-align: center; color: var(--sub); margin: 0 auto 36px; max-width: 46em; }
+  h3 { font-size: 16px; font-weight: 900; margin: 20px 0 6px; }
+  p { margin: 0 0 16px; }
+  b { font-weight: 700; }
+  .note { font-size: 12.5px; color: var(--sub); line-height: 1.8; max-width: 46em; }
+
+  /* ── カード ─────────────────────────────── */
+  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .cols.two { grid-template-columns: repeat(2, 1fr); }
   .box {
-    padding: 15px 0;
-    border-bottom: 1px dotted var(--rule);
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--r);
+    padding: 24px 22px; box-shadow: var(--shadow-s);
+    transition: transform 180ms cubic-bezier(.16, 1, .3, 1), box-shadow 180ms ease-out;
   }
-  .box:first-child { border-top: 1px dotted var(--rule); }
-  .box b {
-    display: block;
-    font-family: "DotGothic16", monospace;
-    font-weight: 400;
-    font-size: 16px;
-    letter-spacing: .02em;
-    margin-bottom: 2px;
-  }
-  .box p { margin: 0; font-size: 14.5px; color: var(--ink-2); line-height: 1.7; }
+  .box:hover { transform: translateY(-3px); box-shadow: var(--shadow-m); }
+  .box b { display: block; font-size: 16px; font-weight: 900; color: var(--navy); margin-bottom: 7px; line-height: 1.5; }
+  .box p { margin: 0; font-size: 14px; color: var(--sub); line-height: 1.8; }
 
-  /* ── 表 (レシートの明細) ───────────────────── */
+  /* ── 表 ────────────────────────────────── */
+  .t-wrap { background: var(--white); border-radius: var(--r); overflow: hidden; }
   table { width: 100%; border-collapse: collapse; font-size: 15px; }
-  th, td { text-align: left; padding: 10px 6px; border-bottom: 1px dotted var(--rule); vertical-align: top; }
-  th {
-    font-family: "DotGothic16", monospace;
-    font-weight: 400;
-    color: var(--ink-2);
-    font-size: 12px;
-    letter-spacing: .1em;
-    border-bottom: 1px solid var(--ink);
-  }
-  td.num, th.num {
-    text-align: right;
-    font-family: "DotGothic16", monospace;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-  /* 合計は倍角で刷られる */
-  tr.total td {
-    font-size: 19px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    border-top: 3px double var(--ink);
-    border-bottom: 0;
-  }
-  tr.total td.num { font-size: 23px; }
-  tr.hl td { background: var(--paper-2); }
+  th, td { text-align: left; padding: 15px 18px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--navy); color: var(--white); font-weight: 900; font-size: 13px; letter-spacing: .02em; border-bottom: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 700; }
+  tr.hl td { background: #fff7f3; }
+  tr.total td { background: var(--sky); color: var(--navy); font-weight: 900; border-bottom: 0; border-top: 2px solid var(--navy); }
+  tr.total td.num { font-size: 22px; color: var(--navy); }
+  tr:last-child td { border-bottom: 0; }
 
-  /* ── 今朝の 1 枚 (デモ印字) ─────────────────── */
-  .demo {
-    border: 1px solid var(--ink);
-    padding: 22px 24px 24px;
-    position: relative;
-    background: var(--paper);
-  }
-  .demo .head h3 { margin-bottom: 0; }
-  .demo .head {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    gap: 18px;
-    padding-right: 96px;
-    flex-wrap: wrap;
-    border-bottom: 1px dashed var(--rule);
-    padding-bottom: 12px;
-    margin-bottom: 18px;
-  }
-  .demo .meta {
-    font-family: "DotGothic16", monospace;
-    font-size: 12.5px;
-    letter-spacing: .08em;
-    color: var(--ink-2);
-    white-space: nowrap;
-  }
-  .demo h3 {
-    font-family: "DotGothic16", monospace;
-    font-weight: 400;
-    margin: 6px 0 18px;
-    font-size: 20px;
-    letter-spacing: .02em;
-  }
-  /* 赤いゴム印。デモであることを紙の上で宣言する */
-  .stamp {
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    font-family: "DotGothic16", monospace;
-    font-size: 13px;
-    letter-spacing: .22em;
-    color: var(--red);
-    border: 2px solid var(--red);
-    padding: 4px 10px 3px;
-    transform: rotate(-7deg);
-    pointer-events: none;
-    user-select: none;
-  }
-  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-  .kpi .l { font-size: 12.5px; color: var(--ink-2); letter-spacing: .04em; }
-  .kpi .v {
-    font-family: "DotGothic16", monospace;
-    font-size: 21px;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.3;
-  }
-  .demo .ok { color: var(--ink); }
-  .demo .warn { color: var(--red); }
-  .demo .err { color: var(--red); }
-  .demo table { margin-top: 16px; }
-  .demo th { border-bottom-color: var(--ink); }
-  .barcap { font-size: 12.5px; color: var(--ink-2); letter-spacing: .04em; margin-top: 20px; }
-  .bars { display: flex; align-items: flex-end; gap: 4px; height: 66px; margin-top: 7px; }
-  .bars span { flex: 1; background: var(--rule); }
-  .bars span.hi { background: var(--ink); }
-
-  /* ── 試算ツール ───────────────────────────── */
-  .calc { border: 1px solid var(--ink); padding: 22px 24px; }
-  .fields { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  /* ── 試算ツール ─────────────────────────── */
+  .calc { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 30px 28px; box-shadow: var(--shadow-m); }
+  .fields { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
   .field { display: flex; flex-direction: column; justify-content: flex-end; }
-  .field label {
-    display: block;
-    font-size: 12.5px;
-    color: var(--ink-2);
-    letter-spacing: .03em;
-    margin-bottom: 5px;
-    line-height: 1.5;
-  }
+  .field label { font-size: 12.5px; font-weight: 700; color: var(--sub); margin-bottom: 7px; line-height: 1.6; }
   .field input {
-    width: 100%;
-    font: inherit;
-    font-family: "DotGothic16", monospace;
-    font-size: 17px;
-    font-variant-numeric: tabular-nums;
-    padding: 8px 2px;
-    color: var(--ink);
-    background: transparent;
-    border: 0;
-    border-bottom: 1.5px solid var(--ink);
-    border-radius: 0;
-    -moz-appearance: textfield;
-    appearance: textfield;
+    width: 100%; font: inherit; font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums;
+    padding: 11px 13px; color: var(--ink); background: var(--white);
+    border: 1.5px solid var(--line); border-radius: 10px;
+    -moz-appearance: textfield; appearance: textfield;
   }
   .field input::-webkit-outer-spin-button,
   .field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .field input:focus { outline: 2px solid var(--red); outline-offset: 3px; }
-  .out { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
-  .cell { border-top: 1px solid var(--ink); padding-top: 10px; }
-  .cell .l { font-size: 12.5px; color: var(--ink-2); letter-spacing: .03em; }
-  .cell .v {
-    font-family: "DotGothic16", monospace;
-    font-size: 27px;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.35;
-  }
-  .cell .v.good { color: var(--ink); }
-  .charts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 26px; }
-  .chart .ttl { font-family: "DotGothic16", monospace; font-size: 14px; letter-spacing: .02em; }
-  .chart .cap { min-height: 3.2em; font-size: 12.5px; color: var(--ink-2); margin: 3px 0 10px; line-height: 1.6; }
+  .field input:hover { border-color: #c2d4f5; }
+  .field input:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(34, 89, 224, .14); }
+  .out { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
+  .cell { background: var(--sky); border-radius: 12px; padding: 16px 18px; }
+  .cell .l { font-size: 12.5px; font-weight: 700; color: var(--blue-d); }
+  .cell .v.good { color: var(--ok); }
+  .cell .v { font-size: 28px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.35; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .blank { display: inline-block; width: 2.4em; height: 3px; background: #b9cdf0; border-radius: 2px; vertical-align: .34em; }
+  .charts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 28px; }
+  /* 帯の上に裸で置かれるグラフ群は、試算カードと同じ扱いにする */
+  .sec > .inner > .charts { background: var(--white); border-radius: 16px; padding: 24px 26px; box-shadow: var(--shadow-s); }
+  .chart { border-top: 2px solid var(--line); padding: 18px 0 0; }
+  .chart .ttl { font-size: 14.5px; font-weight: 900; color: var(--navy); }
+  .chart .cap { min-height: 5.7em; overflow: visible; font-size: 12.5px; color: var(--sub); margin: 4px 0 10px; line-height: 1.7; }
   .chart svg { width: 100%; height: auto; display: block; }
-  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--ink-2); margin-top: 7px; }
+  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--sub); margin-top: 8px; flex-wrap: wrap; }
   .legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .legend i { width: 14px; height: 3px; display: inline-block; }
-  /* 印字できなかった数字。0 ではなく罫だけが残る */
-  .blank {
-    display: inline-block;
-    width: 3.2em;
-    height: 1px;
-    background: var(--rule);
-    vertical-align: .34em;
+  .legend i { width: 14px; height: 4px; border-radius: 2px; display: inline-block; }
+
+  /* ── 折り返しの数字 ─────────────────────── */
+  .fold { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 16px; margin: 0 0 24px; }
+  .fold-f { background: rgba(255, 255, 255, .78); border: 1px solid #d5e4ff; border-radius: 12px; padding: 11px 14px; }
+  .fold-f .l { display: block; font-size: 12px; font-weight: 700; color: var(--sub); }
+  .fold-f .n { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .fold-f .n.red { color: var(--warn); }
+  .fold-note { grid-column: 1 / -1; margin: 0; font-size: 12px; color: var(--sub); }
+
+  /* ── 毎朝届く1枚（本編のデモ） ──────────── */
+  .demo { background: var(--white); border: 1px solid var(--line); border-radius: 18px; padding: 26px 26px 28px; box-shadow: var(--shadow-m); position: relative; }
+  .demo .head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; padding-right: 92px; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 20px; }
+  .demo .head h3 { margin: 0; font-size: 20px; color: var(--navy); }
+  .demo .meta { font-size: 12.5px; font-weight: 700; color: var(--sub); }
+  .stamp {
+    position: absolute; top: 20px; right: 22px;
+    font-size: 12px; font-weight: 900; letter-spacing: .08em;
+    color: var(--white); background: var(--sub); border-radius: 999px; padding: 5px 13px;
+    user-select: none;
   }
-  .cell .v:has(.blank) { line-height: 1.35; }
-  .note { font-size: 12.5px; color: var(--ink-2); line-height: 1.75; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .kpi .l { font-size: 12px; font-weight: 700; color: var(--sub); }
+  .kpi .v { font-size: 23px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.35; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .demo .ok { color: var(--ok); }
+  .demo .warn { color: var(--warn); }
+  .demo .err { color: var(--warn); }
+  .barcap { font-size: 12px; font-weight: 700; color: var(--sub); margin-top: 22px; }
+  .bars { display: flex; align-items: flex-end; gap: 5px; height: 72px; margin-top: 9px; }
+  .bars span { flex: 1; background: #d9e6fb; border-radius: 4px 4px 0 0; }
+  .bars span.hi { background: linear-gradient(180deg, var(--blue-l), var(--blue)); }
+  .demo table { margin-top: 20px; font-size: 14.5px; }
+  .demo th { background: transparent; color: var(--sub); border-bottom: 2px solid var(--line); }
+  .demo td { padding: 12px 2px; }
 
-  /* 日本語の版面はそのまま。英語だけ 1 行を 65〜75ch に収める */
-  #en p, #en .lead, #en .note, #en .box p, #en details p { max-width: 34em; }
-
-  /* ── 手順 ────────────────────────────────── */
-  .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+  /* ── 導入の流れ ─────────────────────────── */
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: 14px; }
   .steps li {
-    position: relative;
-    padding: 14px 0 14px 42px;
-    border-bottom: 1px dotted var(--rule);
-    counter-increment: step;
-    font-size: 15px;
+    position: relative; counter-increment: step; font-size: 15px;
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--r);
+    padding: 20px 24px 20px 74px; box-shadow: var(--shadow-s);
   }
-  .steps li:first-child { border-top: 1px dotted var(--rule); }
   .steps li::before {
-    content: counter(step);
-    position: absolute;
-    left: 0;
-    top: 14px;
-    width: 26px;
-    height: 26px;
-    display: grid;
-    place-items: center;
-    font-family: "DotGothic16", monospace;
-    font-size: 13px;
-    background: var(--ink);
-    color: var(--paper);
+    content: counter(step); position: absolute; left: 22px; top: 19px;
+    width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%;
+    font-size: 15px; font-weight: 900; color: var(--white);
+    background: linear-gradient(135deg, var(--blue-l), var(--blue));
   }
-  .steps b { font-family: "DotGothic16", monospace; font-weight: 400; }
+  .steps b { color: var(--navy); font-weight: 900; }
 
-  /* ── Q&A ────────────────────────────────── */
-  details { border-bottom: 1px dotted var(--rule); }
-  details:first-of-type { border-top: 1px dotted var(--rule); }
+  /* ── Q&A ───────────────────────────────── */
+  details {
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--r);
+    margin-bottom: 12px; box-shadow: var(--shadow-s); overflow: hidden;
+  }
   summary {
-    cursor: pointer;
-    list-style: none;
-    padding: 15px 36px 15px 0;
-    position: relative;
-    font-family: "DotGothic16", monospace;
-    font-size: 15.5px;
-    letter-spacing: .01em;
+    cursor: pointer; list-style: none; position: relative;
+    padding: 19px 62px 19px 24px; font-weight: 900; font-size: 15.5px; color: var(--navy);
   }
   summary::-webkit-details-marker { display: none; }
-  /* 開閉記号は罫線 2 本で引く (グリフではなく、印字された線) */
-  summary::before,
-  summary::after {
-    content: "";
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    background: var(--ink);
-    transition: transform 160ms cubic-bezier(.16, 1, .3, 1), opacity 160ms ease-out;
+  summary::before, summary::after {
+    content: ""; position: absolute; right: 25px; top: 50%; background: var(--blue); border-radius: 2px;
+    transition: transform 200ms cubic-bezier(.16, 1, .3, 1), opacity 200ms ease-out;
   }
-  summary::before { width: 14px; height: 1.5px; margin-top: -0.75px; }
-  summary::after { width: 1.5px; height: 14px; right: 10.25px; margin-top: -7px; }
+  summary::before { width: 15px; height: 2.5px; margin-top: -1.25px; }
+  summary::after { width: 2.5px; height: 15px; right: 31.25px; margin-top: -7.5px; }
   details[open] summary::after { transform: scaleY(0); opacity: 0; }
-  details[open] summary { color: var(--red); }
-  details p { padding: 0 0 18px; margin: 0; font-size: 14.5px; color: var(--ink-2); }
+  summary:hover { background: var(--band); }
+  details p { padding: 0 24px 22px; margin: 0; font-size: 14.5px; color: var(--sub); }
 
-  /* ── 締め ────────────────────────────────── */
-  .end { border-top: 3px double var(--ink); margin-top: 46px; padding-top: 30px; }
-  .end p:first-child { font-family: "DotGothic16", monospace; font-size: 19px; line-height: 1.5; }
+  /* ── 締め ──────────────────────────────── */
+  .end {
+    background: linear-gradient(135deg, var(--navy), var(--blue-d) 55%, #2a62d8);
+    border-radius: 22px; padding: 46px 34px; text-align: center; color: var(--white);
+    box-shadow: 0 18px 46px rgba(0, 0, 0, .22);
+  }
+  .end p:first-child { font-size: clamp(20px, 2.2vw, 27px); font-weight: 900; line-height: 1.5; margin-bottom: 22px; }
+  .end p:first-child b { font-weight: 900; }
+  .end .cta-note { color: rgba(255, 255, 255, .86); }
+  .end .cta { box-shadow: 0 10px 26px rgba(0, 0, 0, .30); }
+  .end .cta:hover { box-shadow: 0 14px 32px rgba(0, 0, 0, .38); }
 
-  footer.wrap { padding-top: 34px; padding-bottom: 46px; border-top: 1px dashed var(--rule); margin-top: 48px; }
-  footer dl { display: grid; grid-template-columns: 170px 1fr; gap: 5px 18px; margin: 0 0 18px; font-size: 12.5px; }
-  footer dt { color: var(--ink-2); font-family: "DotGothic16", monospace; letter-spacing: .02em; }
-  footer dd { margin: 0; }
-  footer a { color: var(--ink); text-underline-offset: 3px; text-decoration-thickness: 1px; }
-  footer a:hover { color: var(--red); }
+  /* ── フッタ ─────────────────────────────── */
+  footer { background: #0b1f44; color: #c3cfe4; padding: 44px 0 40px; font-size: 13px; }
+  footer dl { display: grid; grid-template-columns: 180px 1fr; gap: 7px 22px; margin: 0 0 22px; max-width: 900px; }
+  footer dt { color: #8fa3c4; font-weight: 700; }
+  footer dd { margin: 0; color: #e3eaf6; }
+  footer a { color: #9dc0ff; text-underline-offset: 3px; }
+  footer a:hover { color: var(--white); }
+  footer .note { color: #8fa3c4; font-size: 12px; }
 
-  /* ── ブラウザ側の面も紙に合わせる ───────────────── */
-  ::selection { background: var(--ink); color: var(--paper); }
-  :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
-  html { scrollbar-color: var(--rule) var(--counter); scrollbar-width: thin; }
-  ::-webkit-scrollbar { width: 11px; }
-  ::-webkit-scrollbar-track { background: var(--counter); }
-  ::-webkit-scrollbar-thumb { background: #3c362b; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--rule); }
-  input { caret-color: var(--red); }
+  /* ── ブラウザ側の面 ─────────────────────── */
+  ::selection { background: var(--blue); color: var(--white); }
+  :focus-visible { outline: 3px solid var(--blue-l); outline-offset: 2px; border-radius: 4px; }
+  html { scrollbar-color: #b9c9e6 var(--band); scrollbar-width: thin; }
+  ::-webkit-scrollbar { width: 12px; }
+  ::-webkit-scrollbar-track { background: var(--band); }
+  ::-webkit-scrollbar-thumb { background: #b9c9e6; border-radius: 99px; border: 3px solid var(--band); }
+  ::-webkit-scrollbar-thumb:hover { background: #93aad4; }
+  input { caret-color: var(--blue); }
 
-  /* ── 印字されながら出てくる。紙送りは 1 度だけ ───── */
+  /* ── 動き: 画面に入った節だけ、一度だけ持ち上がる ── */
   @media (prefers-reduced-motion: no-preference) {
-    .feed { animation: feed 820ms cubic-bezier(.16, 1, .3, 1) both; }
-    .feed-2 { animation-delay: 170ms; }
-    .feed-3 { animation-delay: 300ms; }
-    @keyframes feed {
-      from { clip-path: inset(0 0 100% 0); }
-      to { clip-path: inset(0 0 0 0); }
-    }
+    html.js .rise { opacity: 0; transform: translateY(18px); transition: opacity 620ms cubic-bezier(.16, 1, .3, 1), transform 620ms cubic-bezier(.16, 1, .3, 1); }
+    html.js .rise.in { opacity: 1; transform: none; }
+    .feed { animation: rise 720ms cubic-bezier(.16, 1, .3, 1) both; }
+    .feed-2 { animation-delay: 110ms; }
+    .feed-3 { animation-delay: 210ms; }
+    @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
   }
 
+  @media (max-width: 1280px) {
+    .tel { display: none; }
+  }
+  @media (max-width: 1040px) {
+    .nav { display: none; }
+    .hero .inner { grid-template-columns: 1fr; gap: 34px; }
+    .shot { max-width: 340px; }
+  }
   @media (max-width: 860px) {
+    .cols { grid-template-columns: 1fr 1fr; }
     .charts { grid-template-columns: 1fr; }
-    .fields { grid-template-columns: repeat(2, 1fr); }
-    .out { grid-template-columns: 1fr; gap: 12px; }
+    /* 1 列になれば高さを揃える理由が無い。但し書きを切らない */
+    .chart .cap { min-height: 0; }
+    .fields { grid-template-columns: 1fr 1fr; }
+    .out { grid-template-columns: 1fr; }
+    .tel { display: none; }
+  }
+  /* 携帯は本文が長い。行動を画面下に常設する */
+  .dock { display: none; }
+  @media (max-width: 760px) {
+    header.bar .cta.sm { display: none; }
+    .dock {
+      display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+      padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(255, 255, 255, .94); backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+    }
+    .dock .cta { width: 100%; justify-content: center; font-size: 17px; padding: 14px 20px; }
+    footer { padding-bottom: calc(40px + 78px); }
+    .brand { font-size: 15px; }
   }
   @media (max-width: 640px) {
-    body { font-size: 16px; }
-    .wrap { padding: 0 20px; }
-    .roll { box-shadow: none; }
-    h1 { margin-top: 32px; }
-    .kpis { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .calc, .demo { padding: 18px 16px; }
-    .stamp { top: 10px; right: 12px; font-size: 12px; letter-spacing: .16em; }
-    .demo .head { padding-right: 76px; }
-    footer dl { grid-template-columns: 1fr; gap: 1px 0; }
-    footer dt { margin-top: 10px; }
-    .cta { display: block; text-align: center; }
-    /* 料金表は 3 列のままでは 1 文字ずつに折れる。1 行 1 項目に積み直す */
-    main > table, main > table tbody, main > table tr, main > table td { display: block; width: 100%; }
-    main > table tr:first-child { display: none; }
-    main > table tr { padding: 12px 0; border-bottom: 1px dotted var(--rule); }
-    main > table td { border: 0; padding: 1px 0; }
-    main > table td:first-child { font-family: "DotGothic16", monospace; font-size: 16px; }
-    main > table td:nth-child(2) { font-size: 14px; color: var(--ink-2); }
-    main > table td.num { text-align: left; font-size: 19px; padding-top: 4px; }
-    main > table tr.total { border-top: 3px double var(--ink); border-bottom: 0; }
-    main > table tr.total td.num { font-size: 23px; }
+    .inner { padding: 0 18px; }
+    .sec { padding: 52px 0; }
+    .hero { padding: 36px 0 44px; }
+    .cols { grid-template-columns: 1fr; }
+    .kpis { grid-template-columns: 1fr 1fr; }
+    .fold { grid-template-columns: 1fr 1fr; }
+    .calc, .demo { padding: 20px 16px; }
+    .demo .head { padding-right: 0; }
+    .stamp { position: static; display: inline-block; margin-bottom: 12px; }
+    .cta { width: 100%; justify-content: center; }
+    .cta.sm { width: auto; }
+    .end { padding: 34px 20px; border-radius: 16px; }
+    footer dl { grid-template-columns: 1fr; gap: 1px; }
+    footer dt { margin-top: 12px; }
+    .t-wrap table, .t-wrap tbody, .t-wrap tr, .t-wrap td { display: block; width: 100%; }
+    .t-wrap tr:first-child { display: none; }
+    .t-wrap tr { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+    .t-wrap td { border: 0; padding: 2px 0; }
+    .t-wrap td:first-child { font-weight: 900; color: var(--navy); }
+    .t-wrap td:nth-child(2) { font-size: 13.5px; color: var(--sub); }
+    .t-wrap td.num { text-align: left; font-size: 19px; padding-top: 6px; }
+    .t-wrap tr.total { background: var(--sky); border-top: 2px solid var(--navy); }
+    .t-wrap tr.total td { color: var(--navy); }
   }
 </style>
 
@@ -528,6 +446,7 @@
     label : 申込コンバージョンの  例 "AbC-dEfGhIjKlMnOpQ"
 -->
 <script>
+  document.documentElement.className += " js";
   window.MEASURE = { ga4: "", ads: "", label: "" };
   (function () {
     "use strict";
@@ -555,25 +474,52 @@
 </script>
 </head>
 <body>
-<div class="roll">
 
 <header class="bar">
-  <div class="wrap">
+  <div class="inner">
     <div class="brand">
-      <span data-brand="ja">店舗運営パネル<small>Ops Panel — 業務パネルAI研究会</small></span>
-      <span data-brand="en" hidden>Ops Panel<small>Daily numbers for restaurants — Ops Panel AI Lab</small></span>
+      <span data-brand="ja">店舗運営パネル<small>業務パネルAI研究会</small></span>
+      <span data-brand="en" hidden>Ops Panel<small>Ops Panel AI Lab</small></span>
     </div>
-    <div class="lang">
-      <button type="button" data-lang="ja" aria-pressed="true">日本語</button>
-      <button type="button" data-lang="en" aria-pressed="false">English</button>
+    <nav class="nav" data-brand="ja">
+      <a href="#calc">いくら浮くか</a>
+      <a href="#report">毎朝届く1枚</a>
+      <a href="#features">できること</a>
+      <a href="#price">料金</a>
+      <a href="#faq">よくある質問</a>
+    </nav>
+    <nav class="nav" data-brand="en" hidden>
+      <a href="#en-calc">What it saves</a>
+      <a href="#en-report">The morning page</a>
+      <a href="#en-features">Features</a>
+      <a href="#en-price">Pricing</a>
+      <a href="#en-faq">FAQ</a>
+    </nav>
+    <div class="bar-right">
+      <div class="tel">
+        <b>opspanel.ai@gmail.com</b>
+        <span data-brand="ja">お問い合わせは24時間受付・翌営業日までに返信</span>
+        <span data-brand="en" hidden>Open 24h — we reply within one business day</span>
+      </div>
+      <div class="lang">
+        <button type="button" data-lang="ja" aria-pressed="true">日本語</button>
+        <button type="button" data-lang="en" aria-pressed="false">English</button>
+      </div>
+      <a class="cta sm" data-form href="#"><span data-brand="ja">無料で相談</span><span data-brand="en" hidden>Free consult</span></a>
     </div>
   </div>
 </header>
 
 <!-- ───────────────── 日本語 ───────────────── -->
-<main id="ja" class="wrap">
+<main id="ja">
+  <section class="hero">
+    <div class="inner">
+      <div class="hero-copy">
+
   <h1 class="feed">集計をやめて、毎朝1枚で。</h1>
-  <p class="issued feed feed-2"><span data-issue>発行　————/——/——　07:00</span>　／　No.0001　／　毎朝の自動配信</p>
+      <ul class="badges feed feed-2">
+        <li>POSレジ連携</li><li>毎朝スマホに自動配信</li><li>日本語・英語・現地語</li><li>初期導入 2〜4週間</li>
+      </ul>
   <p class="lead feed feed-2">
     POSレジとつないで、売上・原価・人件費・発注を自動でまとめ、毎朝スマホに届けます。<br />
     数えているのは「翌朝に数字が出ること」ではなく、<b>集計に使っていた時間と、気づかず垂れ流していた原価</b>です。
@@ -587,8 +533,36 @@
   </div>
   <p class="feed feed-3"><a class="cta" data-form href="#">無料で相談する（60〜90分）</a></p>
   <p class="cta-note">初回のご相談は無料です。売り込みはしません。合わないと判断した場合はその場でお伝えします。</p>
+      </div>
+      <div class="shot feed feed-3">
+        <span class="shot-tag">デモ</span>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-top">
+              <div class="t">毎朝 07:00 自動配信</div>
+              <div class="d">昨日の売上 — 11/03（火）</div>
+            </div>
+            <div class="phone-grid">
+              <div><span class="l">売上</span><div class="v">¥486,200</div></div>
+              <div><span class="l">客数 / 客単価</span><div class="v">182 / ¥2,672</div></div>
+              <div><span class="l">原価率</span><div class="v warn">34.8%</div></div>
+              <div><span class="l">人件費率</span><div class="v ok">21.4%</div></div>
+            </div>
+            <div class="phone-list">
+              <div class="h">要対応 3件</div>
+              <p class="neg"><span>原価率が目標30%を4.8pt超過</span><span>-¥23,300</span></p>
+              <p><span>在庫が切れそう（3品）</span><span>発注推奨</span></p>
+              <p><span>今月の目標まで（残り27日）</span><span>¥1,870,000</span></p>
+            </div>
+          </div>
+        </div>
+        <p class="shot-cap">実際に届くレポートの構成です（数値はデモ）</p>
+      </div>
+    </div>
+  </section>
+  <section class="sec alt" id="calc">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>導入すると、いくら浮くのか</h2>
   <p>御社の数字を入れてください。<b>その場で計算します</b>（送信も保存もしません）。</p>
   <div class="calc" data-calc>
@@ -608,13 +582,13 @@
         <div class="ttl" data-l="c1t">集計にかかる時間（月）</div>
         <div class="cap" data-l="c1c">自動化できるのは集計・転記・発注リスト作成。判断は人が残ります。</div>
         <div data-chart="hours"></div>
-        <div class="legend"><span><i style="background:#c3372a"></i><span data-l="c1a">いま</span></span><span><i style="background:#1b1915"></i><span data-l="c1b">導入後</span></span></div>
+        <div class="legend"><span><i style="background:#c62f2f"></i><span data-l="c1a">いま</span></span><span><i style="background:#2259e0"></i><span data-l="c1b">導入後</span></span></div>
       </div>
       <div class="chart">
         <div class="ttl" data-l="c2t">24か月の累計（費用と削減額）</div>
         <div class="cap" data-l="c2c">線が交わった月が、払った分を取り返す月です。</div>
         <div data-chart="payback"></div>
-        <div class="legend"><span><i style="background:#c3372a"></i><span data-l="c2a">払う費用（累計）</span></span><span><i style="background:#1b1915"></i><span data-l="c2b">浮く金額（累計）</span></span></div>
+        <div class="legend"><span><i style="background:#c62f2f"></i><span data-l="c2a">払う費用（累計）</span></span><span><i style="background:#2259e0"></i><span data-l="c2b">浮く金額（累計）</span></span></div>
       </div>
     </div>
     <p class="note" style="margin:12px 0 0" data-l="calcnote">
@@ -623,16 +597,22 @@
       これは入力値から機械的に出した<b>試算</b>であり、成果をお約束するものではありません。
     </p>
   </div>
+    </div>
+  </section>
+  <section class="sec" id="pains">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>よくある困りごと</h2>
   <div class="cols">
     <div class="box"><b>数字が翌月まで出ない</b><p>月末に会計へ出して、翌月半ばに結果を知る。手を打てる時期を過ぎている。</p></div>
     <div class="box"><b>原価率がどんぶり</b><p>仕入れ値が変わっても売価は据え置き。どの品で損しているか誰も把握していない。</p></div>
     <div class="box"><b>現場と言語が違う</b><p>日本人オーナーと現地スタッフで、同じ数字を同じ意味で共有できていない。</p></div>
   </div>
+    </div>
+  </section>
+  <section class="sec alt" id="report">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>毎朝、これが届きます</h2>
   <div class="demo">
     <div class="stamp" aria-hidden="true">デモ</div>
@@ -665,19 +645,22 @@
   <div class="charts" style="margin-top:18px">
     <div class="chart">
       <div class="ttl" data-l="c3t">原価率は「下がった」ではなく「毎日見えている」</div>
-      <div class="cap" data-l="c3c">デモ：目標30%を超えた月は、超えた品が翌朝のレポートに並びます。</div>
+      <div class="cap" data-l="c3c">デモ：目標30%を超えた月は、超えた品が翌朝のレポートに並びます。図は仕組みの説明で、改善幅の例示ではありません。</div>
       <div data-chart="foodcost"></div>
-      <div class="legend"><span><i style="background:#1b1915"></i><span data-l="c3a">原価率</span></span><span><i style="background:#c3372a"></i><span data-l="c3b">目標 30%</span></span></div>
+      <div class="legend"><span><i style="background:#2259e0"></i><span data-l="c3a">原価率</span></span><span><i style="background:#c62f2f"></i><span data-l="c3b">目標 30%</span></span></div>
     </div>
     <div class="chart">
       <div class="ttl" data-l="c4t">今月はどこに着地するか</div>
       <div class="cap" data-l="c4c">デモ：前半と後半の1日あたりのペースから、月末の着地を毎日更新します。</div>
       <div data-chart="forecast"></div>
-      <div class="legend"><span><i style="background:#1b1915"></i><span data-l="c4a">実績（日次）</span></span><span><i style="background:#c9c1ae"></i><span data-l="c4b">着地見込み</span></span></div>
+      <div class="legend"><span><i style="background:#0d2a5c"></i><span data-l="c4a">実績（日次）</span></span><span><i style="background:#a9c4f2"></i><span data-l="c4b">着地見込み</span></span></div>
     </div>
   </div>
+    </div>
+  </section>
+  <section class="sec" id="features">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>できること</h2>
   <div class="cols">
     <div class="box"><b>日次レポート自動配信</b><p>毎朝きまった時刻に、前日の売上・客数・原価率・人件費率を LINE / Telegram へ。日本語と現地語を併記。</p></div>
@@ -690,8 +673,11 @@
     <div class="box"><b>毎日のバックアップ</b><p>業務データは定期的に別の場所へ複製。操作は誰がいつ何をしたかを記録に残します。</p></div>
     <div class="box"><b>スマホから全部</b><p>専用のアプリは要りません。外出先でも、同じ画面を同じ数字で見られます。</p></div>
   </div>
+    </div>
+  </section>
+  <section class="sec alt" id="ai">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>AI の使い方も、御社に残します</h2>
   <p>
     ツールを入れても、使う人が育たなければ 1 年で止まります。
@@ -707,10 +693,13 @@
     ※ 対象はオーナー様・店長・経理のご担当者。オンライン（日本語・英語）で行います。
     ※ ご契約中の方は半額です。パネルを導入せず、この伴走だけのご利用もできます。
   </p>
+    </div>
+  </section>
+  <section class="sec" id="price">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>料金</h2>
-  <table>
+  <div class="t-wrap"><table>
     <tr><th>項目</th><th>内容</th><th class="num">金額（税別）</th></tr>
     <tr><td>初期導入</td><td>POS連携・原価データ取込・レポート設計・初期設定</td><td class="num">¥200,000</td></tr>
     <tr><td>月額（1店舗）</td><td>自動配信・保守・軽微な改修・サーバー費込み</td><td class="num">¥30,000 / 月</td></tr>
@@ -718,10 +707,13 @@
     <tr class="hl"><td>AI伴走（任意）</td><td>月1回60分の実習・プロンプト集の作成・自動化1本／月</td><td class="num">¥30,000 / 月<br /><span class="note">導入先は ¥15,000</span></td></tr>
     <tr><td>個別開発</td><td>自社独自の帳票・既存システム連携など</td><td class="num">¥10,000 / 時</td></tr>
     <tr class="total"><td>初年度の目安</td><td>1店舗・初期＋月額12か月（AI伴走なし）</td><td class="num">¥560,000</td></tr>
-  </table>
+  </table></div>
   <p class="note" style="margin-top:10px">※ 最初の1か月はお試し（初期費用のみ・月額無料）。合わなければそこで終了し、データはすべてお渡しします。</p>
+    </div>
+  </section>
+  <section class="sec alt" id="flow">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>導入の流れ</h2>
   <ol class="steps">
     <li><b>ご相談（60〜90分・無料）</b> — いま何を手で集計しているか、どこで時間が溶けているかを伺います。</li>
@@ -729,8 +721,11 @@
     <li><b>初期導入（2〜4週間）</b> — POS連携・原価データの取り込み・レポート設計。ここまでで毎朝の配信が始まります。</li>
     <li><b>お試し1か月 → 継続</b> — 合わなければ終了。データは全部お渡しします。</li>
   </ol>
+    </div>
+  </section>
+  <section class="sec" id="faq">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>よくあるご質問</h2>
   <details><summary>うちのPOSレジでも使えますか？</summary><p>データを書き出せるPOSであれば接続できます。接続方法が無い場合でも、日次の書き出しファイルを読む形で動かせることが多いです。ご相談時に、お使いのPOS名を教えてください。</p></details>
   <details><summary>本当に人件費は減りますか？</summary><p>減るのは「集計・転記・発注リスト作成」に使っている時間で、判断や接客の時間ではありません。上の試算は、その作業時間の85%が無くなるものとして計算しています。実際に何時間使っているかは、ご相談のときに一緒に数えます。</p></details>
@@ -744,12 +739,20 @@
     <p><a class="cta" data-form href="#">無料で相談する</a></p>
     <p class="cta-note" style="margin-bottom:0">フォームは1分で終わります。24時間以内にご返信します。</p>
   </div>
+    </div>
+  </section>
 </main>
 
 <!-- ───────────────── English ───────────────── -->
-<main id="en" class="wrap" lang="en" hidden>
+<main id="en" lang="en" hidden>
+  <section class="hero">
+    <div class="inner">
+      <div class="hero-copy">
+
   <h1 class="feed">Stop compiling. Read one page every morning.</h1>
-  <p class="issued feed feed-2"><span data-issue>ISSUED　————/——/——　07:00</span>　/　No.0001　/　SENT EVERY MORNING</p>
+      <ul class="badges feed feed-2">
+        <li>Connects to your POS</li><li>Sent to your phone each morning</li><li>JP / EN / local language</li><li>Live in 2-4 weeks</li>
+      </ul>
   <p class="lead feed feed-2">
     Connected to your POS, it compiles sales, food cost, labour and purchasing automatically and sends it to your phone.<br />
     What it really saves is not the report — it is <b>the hours spent compiling it, and the margin leaking while nobody looks.</b>
@@ -763,8 +766,36 @@
   </div>
   <p class="feed feed-3"><a class="cta" data-form href="#">Book a free consultation (60–90 min)</a></p>
   <p class="cta-note">The first consultation is free and there is no sales pitch. If it is not a fit, we will tell you so on the call.</p>
+      </div>
+      <div class="shot feed feed-3">
+        <span class="shot-tag">DEMO</span>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-top">
+              <div class="t">SENT AUTOMATICALLY AT 07:00</div>
+              <div class="d">Yesterday — Tue, Nov 3</div>
+            </div>
+            <div class="phone-grid">
+              <div><span class="l">Sales</span><div class="v">¥486,200</div></div>
+              <div><span class="l">Covers / Avg.</span><div class="v">182 / ¥2,672</div></div>
+              <div><span class="l">Food cost</span><div class="v warn">34.8%</div></div>
+              <div><span class="l">Labour</span><div class="v ok">21.4%</div></div>
+            </div>
+            <div class="phone-list">
+              <div class="h">3 THINGS TO ACT ON</div>
+              <p class="neg"><span>Food cost 4.8pt over the 30% target</span><span>-¥23,300</span></p>
+              <p><span>3 items running out</span><span>Reorder</span></p>
+              <p><span>To target this month (27 days left)</span><span>¥1,870,000</span></p>
+            </div>
+          </div>
+        </div>
+        <p class="shot-cap">The layout you actually receive (figures are a demo)</p>
+      </div>
+    </div>
+  </section>
+  <section class="sec alt" id="en-calc">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>What does it actually save you?</h2>
   <p>Put your own numbers in. <b>It calculates in your browser</b> — nothing is sent or stored.</p>
   <div class="calc" data-calc>
@@ -784,13 +815,13 @@
         <div class="ttl" data-l="c1t">Hours per month spent compiling</div>
         <div class="cap" data-l="c1c">Automated: compiling, re-typing, building the order list. Judgement stays with people.</div>
         <div data-chart="hours"></div>
-        <div class="legend"><span><i style="background:#c3372a"></i><span data-l="c1a">Today</span></span><span><i style="background:#1b1915"></i><span data-l="c1b">With the panel</span></span></div>
+        <div class="legend"><span><i style="background:#c62f2f"></i><span data-l="c1a">Today</span></span><span><i style="background:#0d2a5c"></i><span data-l="c1b">With the panel</span></span></div>
       </div>
       <div class="chart">
         <div class="ttl" data-l="c2t">24 months, cumulative</div>
         <div class="cap" data-l="c2c">Where the lines cross is the month you get your money back.</div>
         <div data-chart="payback"></div>
-        <div class="legend"><span><i style="background:#c3372a"></i><span data-l="c2a">What you pay</span></span><span><i style="background:#1b1915"></i><span data-l="c2b">What you save</span></span></div>
+        <div class="legend"><span><i style="background:#c62f2f"></i><span data-l="c2a">What you pay</span></span><span><i style="background:#2259e0"></i><span data-l="c2b">What you save</span></span></div>
       </div>
     </div>
     <p class="note" style="margin:12px 0 0" data-l="calcnote">
@@ -799,16 +830,22 @@
       These are <b>estimates</b> calculated from your inputs, not a guarantee of results.
     </p>
   </div>
+    </div>
+  </section>
+  <section class="sec" id="en-pains">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>Problems we hear</h2>
   <div class="cols">
     <div class="box"><b>Numbers arrive too late</b><p>Books close at month end and results land mid-next-month — long after anything could be fixed.</p></div>
     <div class="box"><b>Food cost is a guess</b><p>Supplier prices move, menu prices do not. Nobody knows which dishes lose money.</p></div>
     <div class="box"><b>Owner and floor speak different languages</b><p>The same figure means different things to the owner and the local team.</p></div>
   </div>
+    </div>
+  </section>
+  <section class="sec alt" id="en-report">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>This lands every morning</h2>
   <div class="demo">
     <div class="stamp" aria-hidden="true">DEMO</div>
@@ -841,19 +878,22 @@
   <div class="charts" style="margin-top:18px">
     <div class="chart">
       <div class="ttl" data-l="c3t">Food cost, visible every single day</div>
-      <div class="cap" data-l="c3c">Demo: in months above the 30% target, the offending dishes are listed in the next morning's report.</div>
+      <div class="cap" data-l="c3c">Demo: in months above the 30% target, the offending dishes are listed in the next morning's report. The curve illustrates the mechanism, not an expected improvement.</div>
       <div data-chart="foodcost"></div>
-      <div class="legend"><span><i style="background:#1b1915"></i><span data-l="c3a">Food cost</span></span><span><i style="background:#c3372a"></i><span data-l="c3b">Target 30%</span></span></div>
+      <div class="legend"><span><i style="background:#2259e0"></i><span data-l="c3a">Food cost</span></span><span><i style="background:#c62f2f"></i><span data-l="c3b">Target 30%</span></span></div>
     </div>
     <div class="chart">
       <div class="ttl" data-l="c4t">Where this month will land</div>
       <div class="cap" data-l="c4c">Demo: the month-end forecast is rebuilt daily from the first- and second-half daily pace.</div>
       <div data-chart="forecast"></div>
-      <div class="legend"><span><i style="background:#1b1915"></i><span data-l="c4a">Actual (daily)</span></span><span><i style="background:#c9c1ae"></i><span data-l="c4b">Forecast</span></span></div>
+      <div class="legend"><span><i style="background:#0d2a5c"></i><span data-l="c4a">Actual (daily)</span></span><span><i style="background:#a9c4f2"></i><span data-l="c4b">Forecast</span></span></div>
     </div>
   </div>
+    </div>
+  </section>
+  <section class="sec" id="en-features">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>What it does</h2>
   <div class="cols">
     <div class="box"><b>Automatic daily report</b><p>Every morning: yesterday's sales, covers, food cost and labour, pushed to LINE / Telegram in two languages.</p></div>
@@ -866,8 +906,11 @@
     <div class="box"><b>Daily backup</b><p>Operational data is copied off-site on a schedule, and every action is written to an audit log.</p></div>
     <div class="box"><b>Works on a phone</b><p>No app to install. The same screens and the same numbers, wherever you are.</p></div>
   </div>
+    </div>
+  </section>
+  <section class="sec alt" id="en-ai">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>Your team learns the AI side too</h2>
   <p>
     A tool nobody grows into stops within a year. This panel is <b>built and rebuilt daily by writing with AI (Claude)</b>,
@@ -882,10 +925,13 @@
     * For owners, store managers and finance staff. Delivered online, in Japanese or English.
     * Half price for clients on a monthly plan. Available on its own, without the panel.
   </p>
+    </div>
+  </section>
+  <section class="sec" id="en-price">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>Pricing</h2>
-  <table>
+  <div class="t-wrap"><table>
     <tr><th>Item</th><th>Scope</th><th class="num">Price (excl. tax)</th></tr>
     <tr><td>Setup</td><td>POS integration, cost data import, report design, configuration</td><td class="num">¥200,000</td></tr>
     <tr><td>Monthly (1 location)</td><td>Automated delivery, maintenance, minor changes, hosting</td><td class="num">¥30,000 / mo</td></tr>
@@ -893,10 +939,13 @@
     <tr class="hl"><td>AI coaching (optional)</td><td>60 min monthly session, prompt book, one automation per month</td><td class="num">¥30,000 / mo<br /><span class="note">¥15,000 for clients</span></td></tr>
     <tr><td>Custom work</td><td>Bespoke reports, integration with existing systems</td><td class="num">¥10,000 / hr</td></tr>
     <tr class="total"><td>First year</td><td>One location, setup + 12 months (without coaching)</td><td class="num">¥560,000</td></tr>
-  </table>
+  </table></div>
   <p class="note" style="margin-top:10px">* First month is a trial: setup fee only, no monthly charge. If it does not fit we stop there and hand over all of your data.</p>
+    </div>
+  </section>
+  <section class="sec alt" id="en-flow">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>How it works</h2>
   <ol class="steps">
     <li><b>Free consultation (60–90 min)</b> — we go through what you currently compile by hand and where the hours go.</li>
@@ -904,8 +953,11 @@
     <li><b>Setup (2–4 weeks)</b> — POS integration, cost data import, report design. The morning delivery starts here.</li>
     <li><b>One month trial, then continue</b> — if it does not fit, we stop and hand over all of your data.</li>
   </ol>
+    </div>
+  </section>
+  <section class="sec" id="en-faq">
+    <div class="inner rise">
 
-  <hr class="cut" />
   <h2>FAQ</h2>
   <details><summary>Will it work with our POS?</summary><p>If your POS can export data, we can connect to it. Even without an API, a daily export file is usually enough. Tell us the POS name on the call.</p></details>
   <details><summary>Will it really cut labour cost?</summary><p>It removes hours spent compiling, re-typing and building order lists — not hours spent on the floor. The estimate above assumes 85% of that work disappears. On the call we count how many hours it actually is in your case.</p></details>
@@ -919,9 +971,12 @@
     <p><a class="cta" data-form href="#">Book a free consultation</a></p>
     <p class="cta-note" style="margin-bottom:0">The form takes a minute. We reply within 24 hours.</p>
   </div>
+    </div>
+  </section>
 </main>
 
-<footer class="wrap">
+<footer>
+  <div class="inner">
   <dl>
     <dt>屋号 / Trading name</dt><dd>業務パネルAI研究会（Ops Panel AI Lab）</dd>
     <dt>担当 / Contact</dt><dd>アル（Al）</dd>
@@ -937,7 +992,12 @@
     Full legal name, address and phone number are disclosed without delay on request.
   </p>
   <p class="note">© 2026 業務パネルAI研究会 / Ops Panel AI Lab</p>
+  </div>
 </footer>
+
+<div class="dock" aria-hidden="false">
+  <a class="cta" data-form href="#"><span data-brand="ja">無料で相談する</span><span data-brand="en" hidden>Book a free consultation</span></a>
+</div>
 
 <script>
 (function () {
@@ -965,7 +1025,7 @@
   }
   function txt(x, y, s, opt) {
     opt = opt || {};
-    return '<text x="' + x + '" y="' + y + '" font-family="DotGothic16, monospace" font-size="' + (opt.size || 11) + '" fill="' + (opt.fill || "#6b6658") +
+    return '<text x="' + x + '" y="' + y + '" font-family="Noto Sans JP, sans-serif" font-size="' + (opt.size || 11) + '" fill="' + (opt.fill || "#5b6880") +
       '" text-anchor="' + (opt.anchor || "start") + '"' + (opt.weight ? ' font-weight="' + opt.weight + '"' : "") + ">" + s + "</text>";
   }
 
@@ -974,21 +1034,21 @@
     var W = 320, H = 186, base = 148, after = hours * (1 - AUTOMATED);
     var max = Math.max(hours, 1);
     var hb = function (v) { return Math.max(2, (v / max) * 88); };
-    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#faf7f0"/>';
-    b += '<line x1="20" y1="' + base + '" x2="' + (W - 10) + '" y2="' + base + '" stroke="#e2dbcb"/>';
+    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="transparent"/>';
+    b += '<line x1="20" y1="' + base + '" x2="' + (W - 10) + '" y2="' + base + '" stroke="#e4ebf7"/>';
     var bars = [
-      { x: 60, v: hours, c: "#c3372a", l: lang === "en" ? "Today" : "いま" },
-      { x: 190, v: after, c: "#1b1915", l: lang === "en" ? "With the panel" : "導入後" }
+      { x: 60, v: hours, c: "#c62f2f", l: lang === "en" ? "Today" : "いま" },
+      { x: 190, v: after, c: "#2259e0", l: lang === "en" ? "With the panel" : "導入後" }
     ];
     bars.forEach(function (d) {
       var h = hb(d.v);
-      b += '<rect x="' + d.x + '" y="' + (base - h) + '" width="70" height="' + h + '" fill="' + d.c + '"/>';
-      b += txt(d.x + 35, base - h - 8, (Math.round(d.v * 10) / 10) + (lang === "en" ? " h" : " 時間"), { anchor: "middle", size: 13, weight: 700, fill: "#1b1915" });
+      b += '<rect x="' + d.x + '" y="' + (base - h) + '" width="70" height="' + h + '" rx="4" fill="' + d.c + '"/>';
+      b += txt(d.x + 35, base - h - 8, (Math.round(d.v * 10) / 10) + (lang === "en" ? " h" : " 時間"), { anchor: "middle", size: 13, weight: 700, fill: "#0d2a5c" });
       b += txt(d.x + 35, base + 18, d.l, { anchor: "middle" });
     });
     var saved = hours - after;
     var savedTxt = Math.round(saved * 10) / 10;
-    b += txt(W / 2, 20, (savedTxt > 0 ? "−" : "") + savedTxt + (lang === "en" ? " hours every month" : " 時間／月"), { anchor: "middle", size: 15, weight: 700, fill: "#1b1915" });
+    b += txt(W / 2, 20, (savedTxt > 0 ? "−" : "") + savedTxt + (lang === "en" ? " hours every month" : " 時間／月"), { anchor: "middle", size: 15, weight: 700, fill: "#0d2a5c" });
     return svg(W, H, b);
   }
 
@@ -1001,25 +1061,25 @@
     var x = function (i) { return L + ((W - L - R) * i) / (N - 1); };
     var y = function (v) { return T + (H - T - B) * (1 - v / max); };
     var path = function (arr) { return arr.map(function (v, i) { return (i ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); }).join(" "); };
-    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#faf7f0"/>';
+    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="transparent"/>';
     [0, 0.5, 1].forEach(function (f) {
       var v = max * f;
-      b += '<line x1="' + L + '" y1="' + y(v) + '" x2="' + (W - R) + '" y2="' + y(v) + '" stroke="#e2dbcb"/>';
-      b += txt(L - 6, y(v) + 4, v < 10000 ? "¥0" : v >= 1e8 ? "¥" + (v / 1e8).toFixed(1) + "億" : "¥" + Math.round(v / 10000) + "万", { anchor: "end", size: 11, fill: "#6b6658" });
+      b += '<line x1="' + L + '" y1="' + y(v) + '" x2="' + (W - R) + '" y2="' + y(v) + '" stroke="#e4ebf7"/>';
+      b += txt(L - 6, y(v) + 4, v < 10000 ? "¥0" : v >= 1e8 ? "¥" + (v / 1e8).toFixed(1) + "億" : "¥" + Math.round(v / 10000) + "万", { anchor: "end", size: 11, fill: "#5b6880" });
     });
-    b += '<path d="' + path(cost) + '" fill="none" stroke="#c3372a" stroke-width="2"/>';
-    b += '<path d="' + path(save) + '" fill="none" stroke="#1b1915" stroke-width="2.5"/>';
+    b += '<path d="' + path(cost) + '" fill="none" stroke="#c62f2f" stroke-width="2"/>';
+    b += '<path d="' + path(save) + '" fill="none" stroke="#2259e0" stroke-width="2.5"/>';
     var hit = -1;
     for (var k = 0; k < N; k++) { if (save[k] >= cost[k]) { hit = k; break; } }
     if (hit >= 0) {
-      b += '<line x1="' + x(hit) + '" y1="' + T + '" x2="' + x(hit) + '" y2="' + (H - B) + '" stroke="#1b1915" stroke-dasharray="3 3"/>';
-      b += '<circle cx="' + x(hit) + '" cy="' + y(save[hit]) + '" r="4" fill="#1b1915"/>';
-      b += txt(Math.min(x(hit) + 6, W - 90), T + 12, (lang === "en" ? "payback: month " : "回収 ") + (hit + 1) + (lang === "en" ? "" : "か月目"), { size: 11, weight: 700, fill: "#1b1915" });
+      b += '<line x1="' + x(hit) + '" y1="' + T + '" x2="' + x(hit) + '" y2="' + (H - B) + '" stroke="#2259e0" stroke-dasharray="3 3"/>';
+      b += '<circle cx="' + x(hit) + '" cy="' + y(save[hit]) + '" r="4" fill="#2259e0"/>';
+      b += txt(Math.min(x(hit) + 6, W - 90), T + 12, (lang === "en" ? "payback: month " : "回収 ") + (hit + 1) + (lang === "en" ? "" : "か月目"), { size: 11, weight: 700, fill: "#0d2a5c" });
     } else {
-      b += txt(W / 2, T + 12, lang === "en" ? "no payback within 24 months" : "24か月では回収できません", { anchor: "middle", size: 11, fill: "#c3372a" });
+      b += txt(W / 2, T + 12, lang === "en" ? "no payback within 24 months" : "24か月では回収できません", { anchor: "middle", size: 11, fill: "#c62f2f" });
     }
     [{ m: 1, a: "start" }, { m: 12, a: "middle" }, { m: 24, a: "end" }].forEach(function (d) {
-      b += txt(x(d.m - 1), H - 10, d.m + (lang === "en" ? "m" : "か月"), { anchor: d.a, size: 11, fill: "#6b6658" });
+      b += txt(x(d.m - 1), H - 10, d.m + (lang === "en" ? "m" : "か月"), { anchor: d.a, size: 11, fill: "#5b6880" });
     });
     return svg(W, H, b);
   }
@@ -1030,18 +1090,18 @@
     var W = 320, H = 170, L = 42, R = 10, T = 16, B = 28, lo = 28, hi = 36;
     var x = function (i) { return L + ((W - L - R) * i) / (vals.length - 1); };
     var y = function (v) { return T + (H - T - B) * (1 - (v - lo) / (hi - lo)); };
-    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#faf7f0"/>';
+    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="transparent"/>';
     [30, 33, 36].forEach(function (v) {
-      b += '<line x1="' + L + '" y1="' + y(v) + '" x2="' + (W - R) + '" y2="' + y(v) + '" stroke="#e2dbcb"/>';
-      b += txt(L - 6, y(v) + 4, v + "%", { anchor: "end", size: 11, fill: "#6b6658" });
+      b += '<line x1="' + L + '" y1="' + y(v) + '" x2="' + (W - R) + '" y2="' + y(v) + '" stroke="#e4ebf7"/>';
+      b += txt(L - 6, y(v) + 4, v + "%", { anchor: "end", size: 11, fill: "#5b6880" });
     });
-    b += '<line x1="' + L + '" y1="' + y(30) + '" x2="' + (W - R) + '" y2="' + y(30) + '" stroke="#c3372a" stroke-dasharray="4 3"/>';
+    b += '<line x1="' + L + '" y1="' + y(30) + '" x2="' + (W - R) + '" y2="' + y(30) + '" stroke="#c62f2f" stroke-dasharray="4 3"/>';
     var d = vals.map(function (v, i) { return (i ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); }).join(" ");
-    b += '<path d="' + d + '" fill="none" stroke="#1b1915" stroke-width="2.5"/>';
-    b += '<circle cx="' + x(vals.length - 1) + '" cy="' + y(vals[vals.length - 1]) + '" r="4" fill="#1b1915"/>';
-    b += txt(x(0), H - 8, lang === "en" ? "month 1" : "1か月目", { size: 11, fill: "#6b6658" });
-    b += txt(W - R, H - 8, lang === "en" ? "month 12" : "12か月目", { anchor: "end", size: 11, fill: "#6b6658" });
-    b += txt(W - R, T + 4, lang === "en" ? "demo (fictional)" : "デモ（架空の数値）", { anchor: "end", size: 11, fill: "#6b6658" });
+    b += '<path d="' + d + '" fill="none" stroke="#2259e0" stroke-width="2.5"/>';
+    b += '<circle cx="' + x(vals.length - 1) + '" cy="' + y(vals[vals.length - 1]) + '" r="4" fill="#0d2a5c"/>';
+    b += txt(x(0), H - 8, lang === "en" ? "month 1" : "1か月目", { size: 11, fill: "#5b6880" });
+    b += txt(W - R, H - 8, lang === "en" ? "month 12" : "12か月目", { anchor: "end", size: 11, fill: "#5b6880" });
+    b += txt(W - R, T + 4, lang === "en" ? "demo (fictional)" : "デモ（架空の数値）", { anchor: "end", size: 11, fill: "#5b6880" });
     return svg(W, H, b);
   }
 
@@ -1052,17 +1112,17 @@
     var W = 320, H = 170, L = 10, R = 10, T = 22, B = 26;
     var all = real.concat(fc), max = Math.max.apply(null, all) * 1.15;
     var n = all.length, bw = (W - L - R) / n - 2;
-    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#faf7f0"/>';
+    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="transparent"/>';
     all.forEach(function (v, i) {
       var h = ((H - T - B) * v) / max;
       b += '<rect x="' + (L + i * (bw + 2)).toFixed(1) + '" y="' + (H - B - h).toFixed(1) + '" width="' + bw.toFixed(1) +
-        '" height="' + h.toFixed(1) + '" fill="' + (i < real.length ? "#1b1915" : "#c9c1ae") + '"/>';
+        '" height="' + h.toFixed(1) + '" rx="2" fill="' + (i < real.length ? "#0d2a5c" : "#a9c4f2") + '"/>';
     });
     var sx = L + real.length * (bw + 2) - 1;
-    b += '<line x1="' + sx + '" y1="' + T + '" x2="' + sx + '" y2="' + (H - B) + '" stroke="#c9c1ae" stroke-dasharray="3 3"/>';
-    b += txt(L, 14, lang === "en" ? "Actual" : "実績", { size: 11, fill: "#6b6658" });
-    b += txt(sx + 4, 14, lang === "en" ? "Forecast to month end" : "月末までの見込み", { size: 11, fill: "#6b6658" });
-    b += txt(W - R, H - 8, lang === "en" ? "demo (fictional)" : "デモ（架空の数値）", { anchor: "end", size: 11, fill: "#6b6658" });
+    b += '<line x1="' + sx + '" y1="' + T + '" x2="' + sx + '" y2="' + (H - B) + '" stroke="#a9c4f2" stroke-dasharray="3 3"/>';
+    b += txt(L, 14, lang === "en" ? "Actual" : "実績", { size: 11, fill: "#5b6880" });
+    b += txt(sx + 4, 14, lang === "en" ? "Forecast to month end" : "月末までの見込み", { size: 11, fill: "#5b6880" });
+    b += txt(W - R, H - 8, lang === "en" ? "demo (fictional)" : "デモ（架空の数値）", { anchor: "end", size: 11, fill: "#5b6880" });
     return svg(W, H, b);
   }
 
@@ -1096,7 +1156,7 @@
     } else {
       var m = Math.ceil(SETUP / net);
       pb.textContent = m > 24 ? (lang === "en" ? "over 24 months" : "24か月以上") : (lang === "en" ? m + " months" : m + " か月");
-      pb.classList.toggle("good", m <= 24);
+      pb.classList.remove("good");
     }
     $('[data-chart="hours"]', root).innerHTML = chartHours(hours, lang);
     $('[data-chart="payback"]', root).innerHTML = chartPayback(saveMonth, feeMonth, lang);
@@ -1158,6 +1218,21 @@
   $$(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { setLang(b.dataset.lang); });
   });
+
+  // 節が画面に入ったら一度だけ持ち上げる。観測できない環境では最初から見えたままにする
+  (function () {
+    var targets = $$(".rise");
+    if (!("IntersectionObserver" in window)) {
+      targets.forEach(function (el) { el.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -12% 0px", threshold: 0.04 });
+    targets.forEach(function (el) { io.observe(el); });
+  })();
   $$("[data-calc]").forEach(function (root) {
     var main = root.closest("main");
     root.addEventListener("input", function () { render(root, main.id); });
@@ -1187,6 +1262,5 @@
 })();
 </script>
 
-</div><!-- /roll -->
 </body>
 </html>
