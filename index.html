@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>店舗運営パネル — 集計をやめて、毎朝1枚で。 | Ops Panel</title>
-<meta name="description" content="POSレジとつないで売上・原価・人件費・発注を自動でまとめ、毎朝スマホに届けます。集計作業の時間と原価率のズレを金額で見せる試算つき。海外の日本食レストラン2店舗で毎日稼働中。" />
+<meta name="description" content="POSレジとつないで売上・原価・人件費・発注を自動でまとめ、毎朝スマホに届けます。集計作業の時間と原価率のズレを金額で見せる試算つき。自社で運営する海外の日本食レストラン2店舗で毎日稼働しています。" />
 <meta property="og:title" content="集計をやめて、毎朝1枚で。 / Stop compiling. Read one page every morning." />
 <meta property="og:description" content="売上・原価・人件費・発注を自動でまとめて毎朝スマホへ。導入でいくら浮くのかを、その場で試算できます。" />
 <meta property="og:type" content="website" />
@@ -23,6 +23,10 @@
 <meta name="twitter:description" content="POSレジとつないで売上・原価・人件費・発注を自動でまとめ、毎朝スマホに届けます。" />
 <meta name="twitter:image" content="https://opspanel-ai.github.io/ops-panel/og.png" />
 <meta name="robots" content="index,follow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet" />
+
 <!--
   公開 LP (GitHub Pages)。正本はこのファイル (mission-control/docs/sales/site/index.html)。
   公開は C:\tmp\ops-panel-site にコピーして push する。
@@ -48,100 +52,471 @@
   独自ドメインへ移すときに直すのは、上の og:url / canonical / og:image / twitter:image の 4 行だけ。
 -->
 <style>
+  /* ── 感熱ロール紙 1 本。暗いカウンターの上に、今朝printされた紙が流れている。
+       インクは 3 つだけ: 黒 (実績) / 赤 (漏れている金) / かすれ (印字できなかったもの)。 */
   :root {
-    --ink: #11141a; --sub: #5b6069; --line: #e4e6ea; --bg: #fff; --soft: #fafbfc;
-    --dark: #12151a; --ok: #1f9d61; --warn: #c8871f; --err: #d2554b; --accent: #1b5bd7;
+    --paper: #faf7f0;
+    --paper-2: #f1ece0;
+    --ink: #1b1915;
+    --ink-2: #6b6658;
+    --rule: #c9c1ae;
+    --rule-2: #e2dbcb;
+    --red: #c3372a;
+    --counter: #17140f;
+    --strip: 760px;
   }
+
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; background: var(--counter); }
+
   body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui, -apple-system, sans-serif;
-    font-size: 16px; line-height: 1.75; -webkit-text-size-adjust: 100%;
+    margin: 0;
+    background: var(--counter);
+    color: var(--ink);
+    font-family: "Zen Kaku Gothic New", "Yu Gothic", "Hiragino Kaku Gothic ProN", system-ui, sans-serif;
+    font-size: 16.5px;
+    line-height: 1.85;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
-  header.bar { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.93); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-  .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 56px; }
-  .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; min-width: 0; overflow: hidden; }
-  .brand small { display: block; font-weight: 400; font-size: 11px; color: var(--sub); line-height: 1.2; }
-  .lang { display: flex; gap: 4px; flex: 0 0 auto; }
-  .lang button { font: inherit; font-size: 13px; padding: 4px 10px; border: 1px solid var(--line); background: #fff; color: var(--sub); border-radius: 999px; cursor: pointer; white-space: nowrap; }
-  .lang button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
-  h1 { font-size: 36px; line-height: 1.28; margin: 52px 0 14px; letter-spacing: -0.025em; }
-  h2 { font-size: 21px; margin: 56px 0 14px; padding-bottom: 8px; border-bottom: 1.5px solid var(--line); letter-spacing: -0.01em; }
+
+  /* ── ロール紙本体 ───────────────────────────── */
+  .roll {
+    max-width: var(--strip);
+    margin: 0 auto;
+    background: var(--paper);
+    box-shadow: 0 0 0 1px rgba(27, 25, 21, .10), 0 18px 48px rgba(0, 0, 0, .55);
+    position: relative;
+  }
+  /* 上端・下端のギザ (ティアオフ)。紙の切れ目そのもの */
+  /* 紙の切れ目。等間隔の歯はバーコードに見えるので、深さの違う破れ縁を作図して敷く */
+  .roll::before,
+  .roll::after {
+    content: "";
+    display: block;
+    height: 12px;
+    background-repeat: repeat-x;
+    background-size: 140px 12px;
+    position: relative;
+  }
+  .roll::before { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='12' viewBox='0 0 140 12'><path d='M0 0 L0.0 4.0 L4.9 1.2 L11.8 1.2 L18.1 1.2 L21.4 1.3 L24.6 1.2 L28.1 1.2 L33.6 3.9 L37.3 1.6 L44.1 5.4 L50.6 4.5 L59.4 1.2 L67.6 1.2 L71.4 1.2 L76.3 3.9 L80.4 4.6 L87.2 3.5 L93.5 1.2 L96.9 1.2 L103.9 1.2 L108.8 1.9 L114.5 1.2 L122.3 2.9 L126.8 3.5 L132.9 6.7 L140.0 4.0 L140 0 Z' fill='%2317140f'/></svg>"); }
+  .roll::after { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='12' viewBox='0 0 140 12'><path d='M0 12 L0.0 4.0 L8.5 7.8 L16.9 4.3 L23.5 3.7 L29.6 1.2 L33.8 1.2 L38.1 1.2 L41.3 1.2 L48.5 1.2 L54.6 3.2 L59.8 1.2 L67.5 1.9 L74.4 2.9 L83.2 1.7 L90.8 1.2 L97.2 2.5 L102.1 1.2 L107.9 3.0 L114.5 2.6 L121.3 1.2 L125.4 1.2 L133.3 1.2 L137.0 1.2 L140.0 4.0 L140 12 Z' fill='%2317140f'/></svg>"); }
+
+  .wrap { padding: 0 44px; }
+
+  /* ── プリンタヘッド (ヘッダ) ──────────────────── */
+  header.bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--paper);
+    border-bottom: 1px solid var(--ink);
+  }
+  header.bar .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 54px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+  .brand {
+    font-family: "DotGothic16", "Yu Gothic", monospace;
+    font-size: 15px;
+    line-height: 1.25;
+    letter-spacing: .04em;
+    min-width: 0;
+  }
+  .brand small {
+    display: block;
+    font-size: 12px;
+    letter-spacing: .08em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .lang { display: flex; flex: 0 0 auto; border: 1px solid var(--ink); }
+  .lang button {
+    font: inherit;
+    font-family: "DotGothic16", monospace;
+    font-size: 12.5px;
+    letter-spacing: .06em;
+    padding: 5px 11px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    cursor: pointer;
+    line-height: 1.3;
+  }
+  .lang button + button { border-left: 1px solid var(--ink); }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .lang button:hover { color: var(--ink); }
+  .lang button[aria-pressed="true"]:hover { color: var(--paper); }
+
+  /* ── 印字の見出し ───────────────────────────── */
+  h1 {
+    font-family: "DotGothic16", "Yu Gothic", monospace;
+    font-size: clamp(30px, 5.6vw, 50px);
+    line-height: 1.26;
+    letter-spacing: -0.005em;
+    font-weight: 400;
+    margin: 46px 0 10px;
+    text-wrap: balance;
+  }
+  /* 日付行。レシートは必ず日付から始まる */
+  .issued {
+    font-family: "DotGothic16", monospace;
+    font-size: 12.5px;
+    letter-spacing: .05em;
+    color: var(--ink-2);
+    margin: 0 0 26px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--rule);
+  }
+  h2 {
+    font-family: "DotGothic16", "Yu Gothic", monospace;
+    font-weight: 400;
+    font-size: 21px;
+    letter-spacing: .02em;
+    margin: 0 0 18px;
+    padding-top: 16px;
+  }
+  /* 節の切れ目 = 紙の切り取り線 */
+  .cut {
+    margin: 54px 0 0;
+    border: 0;
+    border-top: 1px dashed var(--rule);
+    position: relative;
+  }
   h3 { font-size: 16px; margin: 22px 0 6px; }
-  p { margin: 0 0 14px; }
-  .lead { font-size: 17px; color: var(--sub); margin-bottom: 26px; }
-  .cta { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; padding: 14px 26px; border-radius: 10px; font-size: 16px; }
-  .cta:hover { filter: brightness(1.08); }
-  .cta-note { font-size: 13px; color: var(--sub); margin-top: 10px; }
-  .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  .cols.two { grid-template-columns: repeat(2, 1fr); }
-  .box { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; background: var(--soft); }
-  .box b { display: block; margin-bottom: 6px; }
-  .box p { margin: 0; font-size: 14px; color: var(--sub); }
-  table { width: 100%; border-collapse: collapse; font-size: 15px; }
-  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
-  th { color: var(--sub); font-weight: 600; font-size: 13px; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  tr.total td { font-weight: 700; border-top: 1.5px solid var(--ink); }
-  tr.hl td { background: #f3f7ff; }
-  .demo { background: var(--dark); color: #e9eaec; border-radius: 12px; padding: 20px; }
-  .demo .tag { font-size: 11px; letter-spacing: .08em; color: #8b93a1; text-transform: uppercase; }
-  .demo h3 { margin: 4px 0 14px; font-size: 18px; color: #fff; }
-  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .kpi .l { font-size: 11px; color: #8b93a1; }
-  .kpi .v { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .demo .ok { color: #5fd49a; } .demo .warn { color: #f0b457; } .demo .err { color: #f2776f; }
-  .demo table { color: #c9ccd2; font-size: 14px; }
-  .demo th, .demo td { border-bottom: 1px solid #272c34; }
-  .demo th { color: #8b93a1; }
-  .bars { display: flex; align-items: flex-end; gap: 3px; height: 64px; margin-top: 14px; }
-  .bars span { flex: 1; background: #3a4150; border-radius: 2px; }
-  .bars span.hi { background: #5fd49a; }
+  p { margin: 0 0 16px; }
+  .lead { font-size: 18px; color: var(--ink-2); margin-bottom: 30px; max-width: 42em; }
+  .lead b { color: var(--ink); font-weight: 700; }
+  b { font-weight: 700; }
 
-  /* 試算ツール */
-  .calc { border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: var(--soft); }
-  .fields { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .field label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 4px; }
-  .field input, .field select {
-    font: inherit; font-size: 15px; width: 100%; padding: 8px 10px; border: 1px solid var(--line);
-    border-radius: 8px; background: #fff; color: var(--ink); font-variant-numeric: tabular-nums;
+  /* ── 折り返しの中に刷られる 4 つの数字 ───────────── */
+  .fold {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px 18px;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px dashed var(--rule);
+    padding: 14px 0 12px;
+    margin: 0 0 26px;
   }
-  .out { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
-  .out .cell { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
-  .out .l { font-size: 12px; color: var(--sub); }
-  .out .v { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-  .out .v.good { color: var(--ok); }
-  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
-  .chart { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
-  .chart .ttl { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
-  .chart .cap { font-size: 12px; color: var(--sub); margin-bottom: 8px; }
-  .chart svg { display: block; width: 100%; height: auto; }
-  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--sub); margin-top: 6px; }
-  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .fold-f { display: flex; flex-direction: column; gap: 1px; }
+  .fold-f .l { font-size: 12.5px; color: var(--ink-2); letter-spacing: .03em; }
+  .fold-f .n {
+    font-family: "DotGothic16", monospace;
+    font-size: 25px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.3;
+  }
+  .fold-f .n.red { color: var(--red); }
+  .fold-note { grid-column: 1 / -1; margin: 9px 0 0; font-size: 12.5px; color: var(--ink-2); }
 
-  ol.steps { padding-left: 20px; }
-  ol.steps li { margin-bottom: 10px; }
-  details { border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; }
-  details summary { cursor: pointer; font-weight: 600; }
-  details p { margin: 10px 0 0; font-size: 15px; color: var(--sub); }
-  .note { font-size: 13px; color: #7b818b; }
-  .end { margin: 56px 0; padding: 28px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); text-align: center; }
-  footer { border-top: 1px solid var(--line); margin-top: 48px; padding: 24px 0 48px; font-size: 13px; color: var(--sub); }
-  footer dl { display: grid; grid-template-columns: 9em 1fr; gap: 6px 14px; margin: 0 0 14px; }
-  footer dt { color: #8b8f98; } footer dd { margin: 0; }
-  [hidden] { display: none !important; }
-  @media (max-width: 680px) {
-    h1 { font-size: 27px; margin-top: 32px; }
-    .brand { font-size: 14px; }
-    .brand small { font-size: 10px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
-    .cols, .cols.two, .charts { grid-template-columns: 1fr; }
-    .fields { grid-template-columns: 1fr 1fr; }
-    .out { grid-template-columns: 1fr; }
-    .kpis { grid-template-columns: repeat(2, 1fr); }
-    footer dl { grid-template-columns: 1fr; }
+  /* ── 印字されたボタン (黒ベタ反転印字) ───────────── */
+  .cta {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    font-family: "DotGothic16", monospace;
+    font-size: 17px;
+    letter-spacing: .04em;
+    padding: 15px 30px;
+    border: 0;
+    transition: background 140ms ease-out;
+  }
+  .cta:hover { background: var(--red); }
+  .cta-note { font-size: 13.5px; color: var(--ink-2); margin-top: 12px; }
+
+  /* ── 明細行 (箱ではなく、印字された行) ─────────── */
+  .cols { margin: 0; }
+  .box {
+    padding: 15px 0;
+    border-bottom: 1px dotted var(--rule);
+  }
+  .box:first-child { border-top: 1px dotted var(--rule); }
+  .box b {
+    display: block;
+    font-family: "DotGothic16", monospace;
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: .02em;
+    margin-bottom: 2px;
+  }
+  .box p { margin: 0; font-size: 14.5px; color: var(--ink-2); line-height: 1.7; }
+
+  /* ── 表 (レシートの明細) ───────────────────── */
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 6px; border-bottom: 1px dotted var(--rule); vertical-align: top; }
+  th {
+    font-family: "DotGothic16", monospace;
+    font-weight: 400;
+    color: var(--ink-2);
+    font-size: 12px;
+    letter-spacing: .1em;
+    border-bottom: 1px solid var(--ink);
+  }
+  td.num, th.num {
+    text-align: right;
+    font-family: "DotGothic16", monospace;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  /* 合計は倍角で刷られる */
+  tr.total td {
+    font-size: 19px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-top: 3px double var(--ink);
+    border-bottom: 0;
+  }
+  tr.total td.num { font-size: 23px; }
+  tr.hl td { background: var(--paper-2); }
+
+  /* ── 今朝の 1 枚 (デモ印字) ─────────────────── */
+  .demo {
+    border: 1px solid var(--ink);
+    padding: 22px 24px 24px;
+    position: relative;
+    background: var(--paper);
+  }
+  .demo .head h3 { margin-bottom: 0; }
+  .demo .head {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 18px;
+    padding-right: 96px;
+    flex-wrap: wrap;
+    border-bottom: 1px dashed var(--rule);
+    padding-bottom: 12px;
+    margin-bottom: 18px;
+  }
+  .demo .meta {
+    font-family: "DotGothic16", monospace;
+    font-size: 12.5px;
+    letter-spacing: .08em;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .demo h3 {
+    font-family: "DotGothic16", monospace;
+    font-weight: 400;
+    margin: 6px 0 18px;
+    font-size: 20px;
+    letter-spacing: .02em;
+  }
+  /* 赤いゴム印。デモであることを紙の上で宣言する */
+  .stamp {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-family: "DotGothic16", monospace;
+    font-size: 13px;
+    letter-spacing: .22em;
+    color: var(--red);
+    border: 2px solid var(--red);
+    padding: 4px 10px 3px;
+    transform: rotate(-7deg);
+    pointer-events: none;
+    user-select: none;
+  }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .kpi .l { font-size: 12.5px; color: var(--ink-2); letter-spacing: .04em; }
+  .kpi .v {
+    font-family: "DotGothic16", monospace;
+    font-size: 21px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.3;
+  }
+  .demo .ok { color: var(--ink); }
+  .demo .warn { color: var(--red); }
+  .demo .err { color: var(--red); }
+  .demo table { margin-top: 16px; }
+  .demo th { border-bottom-color: var(--ink); }
+  .barcap { font-size: 12.5px; color: var(--ink-2); letter-spacing: .04em; margin-top: 20px; }
+  .bars { display: flex; align-items: flex-end; gap: 4px; height: 66px; margin-top: 7px; }
+  .bars span { flex: 1; background: var(--rule); }
+  .bars span.hi { background: var(--ink); }
+
+  /* ── 試算ツール ───────────────────────────── */
+  .calc { border: 1px solid var(--ink); padding: 22px 24px; }
+  .fields { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .field { display: flex; flex-direction: column; justify-content: flex-end; }
+  .field label {
+    display: block;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    letter-spacing: .03em;
+    margin-bottom: 5px;
+    line-height: 1.5;
+  }
+  .field input {
+    width: 100%;
+    font: inherit;
+    font-family: "DotGothic16", monospace;
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+    padding: 8px 2px;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-bottom: 1.5px solid var(--ink);
+    border-radius: 0;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .field input::-webkit-outer-spin-button,
+  .field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .field input:focus { outline: 2px solid var(--red); outline-offset: 3px; }
+  .out { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+  .cell { border-top: 1px solid var(--ink); padding-top: 10px; }
+  .cell .l { font-size: 12.5px; color: var(--ink-2); letter-spacing: .03em; }
+  .cell .v {
+    font-family: "DotGothic16", monospace;
+    font-size: 27px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.35;
+  }
+  .cell .v.good { color: var(--ink); }
+  .charts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 26px; }
+  .chart .ttl { font-family: "DotGothic16", monospace; font-size: 14px; letter-spacing: .02em; }
+  .chart .cap { min-height: 3.2em; font-size: 12.5px; color: var(--ink-2); margin: 3px 0 10px; line-height: 1.6; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--ink-2); margin-top: 7px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 14px; height: 3px; display: inline-block; }
+  /* 印字できなかった数字。0 ではなく罫だけが残る */
+  .blank {
+    display: inline-block;
+    width: 3.2em;
+    height: 1px;
+    background: var(--rule);
+    vertical-align: .34em;
+  }
+  .cell .v:has(.blank) { line-height: 1.35; }
+  .note { font-size: 12.5px; color: var(--ink-2); line-height: 1.75; }
+
+  /* 日本語の版面はそのまま。英語だけ 1 行を 65〜75ch に収める */
+  #en p, #en .lead, #en .note, #en .box p, #en details p { max-width: 34em; }
+
+  /* ── 手順 ────────────────────────────────── */
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+  .steps li {
+    position: relative;
+    padding: 14px 0 14px 42px;
+    border-bottom: 1px dotted var(--rule);
+    counter-increment: step;
+    font-size: 15px;
+  }
+  .steps li:first-child { border-top: 1px dotted var(--rule); }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    font-family: "DotGothic16", monospace;
+    font-size: 13px;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .steps b { font-family: "DotGothic16", monospace; font-weight: 400; }
+
+  /* ── Q&A ────────────────────────────────── */
+  details { border-bottom: 1px dotted var(--rule); }
+  details:first-of-type { border-top: 1px dotted var(--rule); }
+  summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 15px 36px 15px 0;
+    position: relative;
+    font-family: "DotGothic16", monospace;
+    font-size: 15.5px;
+    letter-spacing: .01em;
+  }
+  summary::-webkit-details-marker { display: none; }
+  /* 開閉記号は罫線 2 本で引く (グリフではなく、印字された線) */
+  summary::before,
+  summary::after {
+    content: "";
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    background: var(--ink);
+    transition: transform 160ms cubic-bezier(.16, 1, .3, 1), opacity 160ms ease-out;
+  }
+  summary::before { width: 14px; height: 1.5px; margin-top: -0.75px; }
+  summary::after { width: 1.5px; height: 14px; right: 10.25px; margin-top: -7px; }
+  details[open] summary::after { transform: scaleY(0); opacity: 0; }
+  details[open] summary { color: var(--red); }
+  details p { padding: 0 0 18px; margin: 0; font-size: 14.5px; color: var(--ink-2); }
+
+  /* ── 締め ────────────────────────────────── */
+  .end { border-top: 3px double var(--ink); margin-top: 46px; padding-top: 30px; }
+  .end p:first-child { font-family: "DotGothic16", monospace; font-size: 19px; line-height: 1.5; }
+
+  footer.wrap { padding-top: 34px; padding-bottom: 46px; border-top: 1px dashed var(--rule); margin-top: 48px; }
+  footer dl { display: grid; grid-template-columns: 170px 1fr; gap: 5px 18px; margin: 0 0 18px; font-size: 12.5px; }
+  footer dt { color: var(--ink-2); font-family: "DotGothic16", monospace; letter-spacing: .02em; }
+  footer dd { margin: 0; }
+  footer a { color: var(--ink); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  footer a:hover { color: var(--red); }
+
+  /* ── ブラウザ側の面も紙に合わせる ───────────────── */
+  ::selection { background: var(--ink); color: var(--paper); }
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+  html { scrollbar-color: var(--rule) var(--counter); scrollbar-width: thin; }
+  ::-webkit-scrollbar { width: 11px; }
+  ::-webkit-scrollbar-track { background: var(--counter); }
+  ::-webkit-scrollbar-thumb { background: #3c362b; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--rule); }
+  input { caret-color: var(--red); }
+
+  /* ── 印字されながら出てくる。紙送りは 1 度だけ ───── */
+  @media (prefers-reduced-motion: no-preference) {
+    .feed { animation: feed 820ms cubic-bezier(.16, 1, .3, 1) both; }
+    .feed-2 { animation-delay: 170ms; }
+    .feed-3 { animation-delay: 300ms; }
+    @keyframes feed {
+      from { clip-path: inset(0 0 100% 0); }
+      to { clip-path: inset(0 0 0 0); }
+    }
+  }
+
+  @media (max-width: 860px) {
+    .charts { grid-template-columns: 1fr; }
+    .fields { grid-template-columns: repeat(2, 1fr); }
+    .out { grid-template-columns: 1fr; gap: 12px; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 20px; }
+    .roll { box-shadow: none; }
+    h1 { margin-top: 32px; }
+    .kpis { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .calc, .demo { padding: 18px 16px; }
+    .stamp { top: 10px; right: 12px; font-size: 12px; letter-spacing: .16em; }
+    .demo .head { padding-right: 76px; }
+    footer dl { grid-template-columns: 1fr; gap: 1px 0; }
+    footer dt { margin-top: 10px; }
     .cta { display: block; text-align: center; }
+    /* 料金表は 3 列のままでは 1 文字ずつに折れる。1 行 1 項目に積み直す */
+    main > table, main > table tbody, main > table tr, main > table td { display: block; width: 100%; }
+    main > table tr:first-child { display: none; }
+    main > table tr { padding: 12px 0; border-bottom: 1px dotted var(--rule); }
+    main > table td { border: 0; padding: 1px 0; }
+    main > table td:first-child { font-family: "DotGothic16", monospace; font-size: 16px; }
+    main > table td:nth-child(2) { font-size: 14px; color: var(--ink-2); }
+    main > table td.num { text-align: left; font-size: 19px; padding-top: 4px; }
+    main > table tr.total { border-top: 3px double var(--ink); border-bottom: 0; }
+    main > table tr.total td.num { font-size: 23px; }
   }
 </style>
 
@@ -180,6 +555,7 @@
 </script>
 </head>
 <body>
+<div class="roll">
 
 <header class="bar">
   <div class="wrap">
@@ -196,40 +572,49 @@
 
 <!-- ───────────────── 日本語 ───────────────── -->
 <main id="ja" class="wrap">
-  <h1>集計をやめて、毎朝1枚で。</h1>
-  <p class="lead">
+  <h1 class="feed">集計をやめて、毎朝1枚で。</h1>
+  <p class="issued feed feed-2"><span data-issue>発行　————/——/——　07:00</span>　／　No.0001　／　毎朝の自動配信</p>
+  <p class="lead feed feed-2">
     POSレジとつないで、売上・原価・人件費・発注を自動でまとめ、毎朝スマホに届けます。<br />
     数えているのは「翌朝に数字が出ること」ではなく、<b>集計に使っていた時間と、気づかず垂れ流していた原価</b>です。
   </p>
-  <p><a class="cta" data-form href="#">無料で相談する（60〜90分）</a></p>
+  <div class="fold feed feed-3" role="img" aria-label="毎朝届く1枚のデモ。売上48万6200円、原価率34.8%、人件費率21.4%、要対応3件。">
+    <div class="fold-f"><span class="l">昨日の売上</span><span class="n">¥486,200</span></div>
+    <div class="fold-f"><span class="l">原価率</span><span class="n red">34.8%</span></div>
+    <div class="fold-f"><span class="l">人件費率</span><span class="n">21.4%</span></div>
+    <div class="fold-f"><span class="l">要対応</span><span class="n">3件</span></div>
+    <p class="fold-note">↑ 毎朝、これが1枚で届きます（数値はデモ）</p>
+  </div>
+  <p class="feed feed-3"><a class="cta" data-form href="#">無料で相談する（60〜90分）</a></p>
   <p class="cta-note">初回のご相談は無料です。売り込みはしません。合わないと判断した場合はその場でお伝えします。</p>
 
+  <hr class="cut" />
   <h2>導入すると、いくら浮くのか</h2>
   <p>御社の数字を入れてください。<b>その場で計算します</b>（送信も保存もしません）。</p>
   <div class="calc" data-calc>
     <div class="fields">
-      <div class="field"><label data-l="f1">月商（円・1店舗あたり）</label><input type="number" data-k="sales" value="3000000" min="0" step="100000" /></div>
-      <div class="field"><label data-l="f2">店舗数</label><input type="number" data-k="shops" value="2" min="1" max="50" step="1" /></div>
-      <div class="field"><label data-l="f3">集計・発注に使う時間（時間／月）</label><input type="number" data-k="hours" value="20" min="0" max="300" step="1" /></div>
-      <div class="field"><label data-l="f4">その作業をする人の時給（円）</label><input type="number" data-k="wage" value="2000" min="0" step="100" /></div>
+      <div class="field"><label for="ja-sales" data-l="f1">月商（円・1店舗あたり）</label><input id="ja-sales" type="number" data-k="sales" value="3000000" min="0" step="100000" /></div>
+      <div class="field"><label for="ja-shops" data-l="f2">店舗数</label><input id="ja-shops" type="number" data-k="shops" value="2" min="1" max="50" step="1" /></div>
+      <div class="field"><label for="ja-hours" data-l="f3">集計・発注に使う時間（時間／月）</label><input id="ja-hours" type="number" data-k="hours" value="20" min="0" max="300" step="1" /></div>
+      <div class="field"><label for="ja-wage" data-l="f4">その作業をする人の時給（円）</label><input id="ja-wage" type="number" data-k="wage" value="2000" min="0" step="100" /></div>
     </div>
     <div class="out">
-      <div class="cell"><div class="l" data-l="o1">人件費の削減（年）</div><div class="v good" data-o="labour">—</div></div>
-      <div class="cell"><div class="l" data-l="o2">原価のロス回収（年）</div><div class="v good" data-o="cost">—</div></div>
-      <div class="cell"><div class="l" data-l="o3">費用を回収するまで</div><div class="v" data-o="payback">—</div></div>
+      <div class="cell"><div class="l" data-l="o1">人件費の削減（年）</div><div class="v good" data-o="labour"><span class="blank"></span></div></div>
+      <div class="cell"><div class="l" data-l="o2">原価のロス回収（年）</div><div class="v good" data-o="cost"><span class="blank"></span></div></div>
+      <div class="cell"><div class="l" data-l="o3">費用を回収するまで</div><div class="v" data-o="payback"><span class="blank"></span></div></div>
     </div>
     <div class="charts">
       <div class="chart">
         <div class="ttl" data-l="c1t">集計にかかる時間（月）</div>
         <div class="cap" data-l="c1c">自動化できるのは集計・転記・発注リスト作成。判断は人が残ります。</div>
         <div data-chart="hours"></div>
-        <div class="legend"><span><i style="background:#c3c8d2"></i><span data-l="c1a">いま</span></span><span><i style="background:#1f9d61"></i><span data-l="c1b">導入後</span></span></div>
+        <div class="legend"><span><i style="background:#c3372a"></i><span data-l="c1a">いま</span></span><span><i style="background:#1b1915"></i><span data-l="c1b">導入後</span></span></div>
       </div>
       <div class="chart">
         <div class="ttl" data-l="c2t">24か月の累計（費用と削減額）</div>
         <div class="cap" data-l="c2c">線が交わった月が、払った分を取り返す月です。</div>
         <div data-chart="payback"></div>
-        <div class="legend"><span><i style="background:#d2554b"></i><span data-l="c2a">払う費用（累計）</span></span><span><i style="background:#1f9d61"></i><span data-l="c2b">浮く金額（累計）</span></span></div>
+        <div class="legend"><span><i style="background:#c3372a"></i><span data-l="c2a">払う費用（累計）</span></span><span><i style="background:#1b1915"></i><span data-l="c2b">浮く金額（累計）</span></span></div>
       </div>
     </div>
     <p class="note" style="margin:12px 0 0" data-l="calcnote">
@@ -239,6 +624,7 @@
     </p>
   </div>
 
+  <hr class="cut" />
   <h2>よくある困りごと</h2>
   <div class="cols">
     <div class="box"><b>数字が翌月まで出ない</b><p>月末に会計へ出して、翌月半ばに結果を知る。手を打てる時期を過ぎている。</p></div>
@@ -246,17 +632,22 @@
     <div class="box"><b>現場と言語が違う</b><p>日本人オーナーと現地スタッフで、同じ数字を同じ意味で共有できていない。</p></div>
   </div>
 
+  <hr class="cut" />
   <h2>毎朝、これが届きます</h2>
   <div class="demo">
-    <div class="tag">Daily report · 自動配信</div>
-    <h3>昨日の売上 — 11/03（火）</h3>
+    <div class="stamp" aria-hidden="true">デモ</div>
+    <div class="head">
+      <h3>昨日の売上　11/03（火）</h3>
+      <span class="meta">自動配信 07:00</span>
+    </div>
     <div class="kpis">
       <div class="kpi"><div class="l">売上</div><div class="v">¥486,200</div></div>
       <div class="kpi"><div class="l">客数 / 客単価</div><div class="v">182 / ¥2,672</div></div>
       <div class="kpi"><div class="l">原価率</div><div class="v warn">34.8%</div></div>
       <div class="kpi"><div class="l">人件費率</div><div class="v ok">21.4%</div></div>
     </div>
-    <div class="bars">
+    <div class="barcap">直近12日の売上　／　濃い日＝目標達成</div>
+    <div class="bars" role="img" aria-label="直近12日の日別売上。うち4日が目標達成。">
       <span style="height:38%"></span><span style="height:52%"></span><span style="height:44%"></span>
       <span style="height:61%"></span><span style="height:73%" class="hi"></span><span style="height:88%" class="hi"></span>
       <span style="height:56%"></span><span style="height:47%"></span><span style="height:66%"></span>
@@ -276,16 +667,17 @@
       <div class="ttl" data-l="c3t">原価率は「下がった」ではなく「毎日見えている」</div>
       <div class="cap" data-l="c3c">デモ：目標30%を超えた月は、超えた品が翌朝のレポートに並びます。</div>
       <div data-chart="foodcost"></div>
-      <div class="legend"><span><i style="background:#1b5bd7"></i><span data-l="c3a">原価率</span></span><span><i style="background:#d2554b"></i><span data-l="c3b">目標 30%</span></span></div>
+      <div class="legend"><span><i style="background:#1b1915"></i><span data-l="c3a">原価率</span></span><span><i style="background:#c3372a"></i><span data-l="c3b">目標 30%</span></span></div>
     </div>
     <div class="chart">
       <div class="ttl" data-l="c4t">今月はどこに着地するか</div>
       <div class="cap" data-l="c4c">デモ：前半と後半の1日あたりのペースから、月末の着地を毎日更新します。</div>
       <div data-chart="forecast"></div>
-      <div class="legend"><span><i style="background:#12151a"></i><span data-l="c4a">実績（日次）</span></span><span><i style="background:#9fb6e6"></i><span data-l="c4b">着地見込み</span></span></div>
+      <div class="legend"><span><i style="background:#1b1915"></i><span data-l="c4a">実績（日次）</span></span><span><i style="background:#c9c1ae"></i><span data-l="c4b">着地見込み</span></span></div>
     </div>
   </div>
 
+  <hr class="cut" />
   <h2>できること</h2>
   <div class="cols">
     <div class="box"><b>日次レポート自動配信</b><p>毎朝きまった時刻に、前日の売上・客数・原価率・人件費率を LINE / Telegram へ。日本語と現地語を併記。</p></div>
@@ -299,6 +691,7 @@
     <div class="box"><b>スマホから全部</b><p>専用のアプリは要りません。外出先でも、同じ画面を同じ数字で見られます。</p></div>
   </div>
 
+  <hr class="cut" />
   <h2>AI の使い方も、御社に残します</h2>
   <p>
     ツールを入れても、使う人が育たなければ 1 年で止まります。
@@ -315,6 +708,7 @@
     ※ ご契約中の方は半額です。パネルを導入せず、この伴走だけのご利用もできます。
   </p>
 
+  <hr class="cut" />
   <h2>料金</h2>
   <table>
     <tr><th>項目</th><th>内容</th><th class="num">金額（税別）</th></tr>
@@ -327,6 +721,7 @@
   </table>
   <p class="note" style="margin-top:10px">※ 最初の1か月はお試し（初期費用のみ・月額無料）。合わなければそこで終了し、データはすべてお渡しします。</p>
 
+  <hr class="cut" />
   <h2>導入の流れ</h2>
   <ol class="steps">
     <li><b>ご相談（60〜90分・無料）</b> — いま何を手で集計しているか、どこで時間が溶けているかを伺います。</li>
@@ -335,13 +730,14 @@
     <li><b>お試し1か月 → 継続</b> — 合わなければ終了。データは全部お渡しします。</li>
   </ol>
 
+  <hr class="cut" />
   <h2>よくあるご質問</h2>
   <details><summary>うちのPOSレジでも使えますか？</summary><p>データを書き出せるPOSであれば接続できます。接続方法が無い場合でも、日次の書き出しファイルを読む形で動かせることが多いです。ご相談時に、お使いのPOS名を教えてください。</p></details>
   <details><summary>本当に人件費は減りますか？</summary><p>減るのは「集計・転記・発注リスト作成」に使っている時間で、判断や接客の時間ではありません。上の試算は、その作業時間の85%が無くなるものとして計算しています。実際に何時間使っているかは、ご相談のときに一緒に数えます。</p></details>
   <details><summary>データは安全ですか？</summary><p>お預かりするのは売上・原価・シフトなどの業務データです。目的外に使わず、第三者に渡しません。毎日別の場所へバックアップし、誰がいつ何を操作したかも記録しています。終了時はすべてお渡ししたうえで削除します。</p></details>
   <details><summary>いつでも解約できますか？</summary><p>できます。月額は当月末までで、違約金はありません。お渡ししたデータとレポートはそのままお使いいただけます。</p></details>
   <details><summary>スタッフが日本語を読めません。</summary><p>画面もレポートも、日本語・英語・現地語を切り替えられます。同じ数字を同じ意味で見てもらうことが目的の機能です。</p></details>
-  <details><summary>誰が作っていますか？</summary><p>個人の開発者（屋号：業務パネルAI研究会）です。大きな会社ではないぶん、追加や変更は数日単位で反映できます。実際に海外の日本食レストラン2店舗で、毎日このパネルが動いています。</p></details>
+  <details><summary>誰が作っていますか？</summary><p>個人の開発者（屋号：業務パネルAI研究会）です。大きな会社ではないぶん、追加や変更は数日単位で反映できます。まず自社で運営する海外の日本食レストラン2店舗に入れ、毎日動かしています。</p></details>
 
   <div class="end">
     <p><b>まずは、いま何を手で集計しているかだけ教えてください。</b></p>
@@ -352,40 +748,49 @@
 
 <!-- ───────────────── English ───────────────── -->
 <main id="en" class="wrap" lang="en" hidden>
-  <h1>Stop compiling. Read one page every morning.</h1>
-  <p class="lead">
+  <h1 class="feed">Stop compiling. Read one page every morning.</h1>
+  <p class="issued feed feed-2"><span data-issue>ISSUED　————/——/——　07:00</span>　/　No.0001　/　SENT EVERY MORNING</p>
+  <p class="lead feed feed-2">
     Connected to your POS, it compiles sales, food cost, labour and purchasing automatically and sends it to your phone.<br />
     What it really saves is not the report — it is <b>the hours spent compiling it, and the margin leaking while nobody looks.</b>
   </p>
-  <p><a class="cta" data-form href="#">Book a free consultation (60–90 min)</a></p>
+  <div class="fold feed feed-3" role="img" aria-label="Demo of the sheet sent each morning: sales 486,200 yen, food cost 34.8%, labour 21.4%, 3 items need attention.">
+    <div class="fold-f"><span class="l">Sales</span><span class="n">¥486,200</span></div>
+    <div class="fold-f"><span class="l">Food cost</span><span class="n red">34.8%</span></div>
+    <div class="fold-f"><span class="l">Labour</span><span class="n">21.4%</span></div>
+    <div class="fold-f"><span class="l">To act on</span><span class="n">3</span></div>
+    <p class="fold-note">↑ One sheet, every morning (demo figures)</p>
+  </div>
+  <p class="feed feed-3"><a class="cta" data-form href="#">Book a free consultation (60–90 min)</a></p>
   <p class="cta-note">The first consultation is free and there is no sales pitch. If it is not a fit, we will tell you so on the call.</p>
 
+  <hr class="cut" />
   <h2>What does it actually save you?</h2>
   <p>Put your own numbers in. <b>It calculates in your browser</b> — nothing is sent or stored.</p>
   <div class="calc" data-calc>
     <div class="fields">
-      <div class="field"><label data-l="f1">Monthly sales (JPY, per location)</label><input type="number" data-k="sales" value="3000000" min="0" step="100000" /></div>
-      <div class="field"><label data-l="f2">Locations</label><input type="number" data-k="shops" value="2" min="1" max="50" step="1" /></div>
-      <div class="field"><label data-l="f3">Hours/month spent compiling &amp; ordering</label><input type="number" data-k="hours" value="20" min="0" max="300" step="1" /></div>
-      <div class="field"><label data-l="f4">Hourly cost of that person (JPY)</label><input type="number" data-k="wage" value="2000" min="0" step="100" /></div>
+      <div class="field"><label for="en-sales" data-l="f1">Monthly sales (JPY, per location)</label><input id="en-sales" type="number" data-k="sales" value="3000000" min="0" step="100000" /></div>
+      <div class="field"><label for="en-shops" data-l="f2">Locations</label><input id="en-shops" type="number" data-k="shops" value="2" min="1" max="50" step="1" /></div>
+      <div class="field"><label for="en-hours" data-l="f3">Hours/month spent compiling &amp; ordering</label><input id="en-hours" type="number" data-k="hours" value="20" min="0" max="300" step="1" /></div>
+      <div class="field"><label for="en-wage" data-l="f4">Hourly cost of that person (JPY)</label><input id="en-wage" type="number" data-k="wage" value="2000" min="0" step="100" /></div>
     </div>
     <div class="out">
-      <div class="cell"><div class="l" data-l="o1">Labour saved (per year)</div><div class="v good" data-o="labour">—</div></div>
-      <div class="cell"><div class="l" data-l="o2">Margin recovered (per year)</div><div class="v good" data-o="cost">—</div></div>
-      <div class="cell"><div class="l" data-l="o3">Time to pay back</div><div class="v" data-o="payback">—</div></div>
+      <div class="cell"><div class="l" data-l="o1">Labour saved (per year)</div><div class="v good" data-o="labour"><span class="blank"></span></div></div>
+      <div class="cell"><div class="l" data-l="o2">Margin recovered (per year)</div><div class="v good" data-o="cost"><span class="blank"></span></div></div>
+      <div class="cell"><div class="l" data-l="o3">Time to pay back</div><div class="v" data-o="payback"><span class="blank"></span></div></div>
     </div>
     <div class="charts">
       <div class="chart">
         <div class="ttl" data-l="c1t">Hours per month spent compiling</div>
         <div class="cap" data-l="c1c">Automated: compiling, re-typing, building the order list. Judgement stays with people.</div>
         <div data-chart="hours"></div>
-        <div class="legend"><span><i style="background:#c3c8d2"></i><span data-l="c1a">Today</span></span><span><i style="background:#1f9d61"></i><span data-l="c1b">With the panel</span></span></div>
+        <div class="legend"><span><i style="background:#c3372a"></i><span data-l="c1a">Today</span></span><span><i style="background:#1b1915"></i><span data-l="c1b">With the panel</span></span></div>
       </div>
       <div class="chart">
         <div class="ttl" data-l="c2t">24 months, cumulative</div>
         <div class="cap" data-l="c2c">Where the lines cross is the month you get your money back.</div>
         <div data-chart="payback"></div>
-        <div class="legend"><span><i style="background:#d2554b"></i><span data-l="c2a">What you pay</span></span><span><i style="background:#1f9d61"></i><span data-l="c2b">What you save</span></span></div>
+        <div class="legend"><span><i style="background:#c3372a"></i><span data-l="c2a">What you pay</span></span><span><i style="background:#1b1915"></i><span data-l="c2b">What you save</span></span></div>
       </div>
     </div>
     <p class="note" style="margin:12px 0 0" data-l="calcnote">
@@ -395,6 +800,7 @@
     </p>
   </div>
 
+  <hr class="cut" />
   <h2>Problems we hear</h2>
   <div class="cols">
     <div class="box"><b>Numbers arrive too late</b><p>Books close at month end and results land mid-next-month — long after anything could be fixed.</p></div>
@@ -402,17 +808,22 @@
     <div class="box"><b>Owner and floor speak different languages</b><p>The same figure means different things to the owner and the local team.</p></div>
   </div>
 
+  <hr class="cut" />
   <h2>This lands every morning</h2>
   <div class="demo">
-    <div class="tag">Daily report · delivered automatically</div>
-    <h3>Yesterday — Tue, Nov 3</h3>
+    <div class="stamp" aria-hidden="true">DEMO</div>
+    <div class="head">
+      <h3>Yesterday　Tue, Nov 3</h3>
+      <span class="meta">AUTO-SENT 07:00</span>
+    </div>
     <div class="kpis">
       <div class="kpi"><div class="l">Sales</div><div class="v">¥486,200</div></div>
       <div class="kpi"><div class="l">Covers / avg</div><div class="v">182 / ¥2,672</div></div>
       <div class="kpi"><div class="l">Food cost</div><div class="v warn">34.8%</div></div>
       <div class="kpi"><div class="l">Labour</div><div class="v ok">21.4%</div></div>
     </div>
-    <div class="bars">
+    <div class="barcap">Last 12 days　/　dark = target met</div>
+    <div class="bars" role="img" aria-label="Daily sales for the last 12 days; 4 days met target.">
       <span style="height:38%"></span><span style="height:52%"></span><span style="height:44%"></span>
       <span style="height:61%"></span><span style="height:73%" class="hi"></span><span style="height:88%" class="hi"></span>
       <span style="height:56%"></span><span style="height:47%"></span><span style="height:66%"></span>
@@ -425,23 +836,24 @@
       <tr><td>Gap to this month's target (27 days left)</td><td class="num">¥1,870,000</td></tr>
     </table>
   </div>
-  <p class="note" style="margin-top:10px">* Demo screen. Every figure is fictional; live client names and real figures are withheld under confidentiality.</p>
+  <p class="note" style="margin-top:10px">* Demo screen. Every figure is fictional; the names of the shops running it and their real figures are withheld.</p>
 
   <div class="charts" style="margin-top:18px">
     <div class="chart">
       <div class="ttl" data-l="c3t">Food cost, visible every single day</div>
       <div class="cap" data-l="c3c">Demo: in months above the 30% target, the offending dishes are listed in the next morning's report.</div>
       <div data-chart="foodcost"></div>
-      <div class="legend"><span><i style="background:#1b5bd7"></i><span data-l="c3a">Food cost</span></span><span><i style="background:#d2554b"></i><span data-l="c3b">Target 30%</span></span></div>
+      <div class="legend"><span><i style="background:#1b1915"></i><span data-l="c3a">Food cost</span></span><span><i style="background:#c3372a"></i><span data-l="c3b">Target 30%</span></span></div>
     </div>
     <div class="chart">
       <div class="ttl" data-l="c4t">Where this month will land</div>
       <div class="cap" data-l="c4c">Demo: the month-end forecast is rebuilt daily from the first- and second-half daily pace.</div>
       <div data-chart="forecast"></div>
-      <div class="legend"><span><i style="background:#12151a"></i><span data-l="c4a">Actual (daily)</span></span><span><i style="background:#9fb6e6"></i><span data-l="c4b">Forecast</span></span></div>
+      <div class="legend"><span><i style="background:#1b1915"></i><span data-l="c4a">Actual (daily)</span></span><span><i style="background:#c9c1ae"></i><span data-l="c4b">Forecast</span></span></div>
     </div>
   </div>
 
+  <hr class="cut" />
   <h2>What it does</h2>
   <div class="cols">
     <div class="box"><b>Automatic daily report</b><p>Every morning: yesterday's sales, covers, food cost and labour, pushed to LINE / Telegram in two languages.</p></div>
@@ -455,6 +867,7 @@
     <div class="box"><b>Works on a phone</b><p>No app to install. The same screens and the same numbers, wherever you are.</p></div>
   </div>
 
+  <hr class="cut" />
   <h2>Your team learns the AI side too</h2>
   <p>
     A tool nobody grows into stops within a year. This panel is <b>built and rebuilt daily by writing with AI (Claude)</b>,
@@ -470,6 +883,7 @@
     * Half price for clients on a monthly plan. Available on its own, without the panel.
   </p>
 
+  <hr class="cut" />
   <h2>Pricing</h2>
   <table>
     <tr><th>Item</th><th>Scope</th><th class="num">Price (excl. tax)</th></tr>
@@ -482,6 +896,7 @@
   </table>
   <p class="note" style="margin-top:10px">* First month is a trial: setup fee only, no monthly charge. If it does not fit we stop there and hand over all of your data.</p>
 
+  <hr class="cut" />
   <h2>How it works</h2>
   <ol class="steps">
     <li><b>Free consultation (60–90 min)</b> — we go through what you currently compile by hand and where the hours go.</li>
@@ -490,13 +905,14 @@
     <li><b>One month trial, then continue</b> — if it does not fit, we stop and hand over all of your data.</li>
   </ol>
 
+  <hr class="cut" />
   <h2>FAQ</h2>
   <details><summary>Will it work with our POS?</summary><p>If your POS can export data, we can connect to it. Even without an API, a daily export file is usually enough. Tell us the POS name on the call.</p></details>
   <details><summary>Will it really cut labour cost?</summary><p>It removes hours spent compiling, re-typing and building order lists — not hours spent on the floor. The estimate above assumes 85% of that work disappears. On the call we count how many hours it actually is in your case.</p></details>
   <details><summary>Is our data safe?</summary><p>We hold operational data only — sales, costs, shifts. It is never used for anything else and never passed to a third party. It is backed up off-site daily and every action is logged. On termination we hand everything over and delete our copy.</p></details>
   <details><summary>Can we cancel anytime?</summary><p>Yes. The monthly fee runs to the end of that month and there is no cancellation penalty. The data and reports stay yours.</p></details>
   <details><summary>Our staff do not read Japanese.</summary><p>Screens and reports switch between Japanese, English and the local language. Letting the owner and the floor read the same number is the point of the feature.</p></details>
-  <details><summary>Who builds it?</summary><p>An independent developer (trading as Ops Panel AI Lab). Being small is the advantage: changes ship in days, not quarters. The same panel runs every day at two Japanese restaurants overseas.</p></details>
+  <details><summary>Who builds it?</summary><p>An independent developer (trading as Ops Panel AI Lab). Being small is the advantage: changes ship in days, not quarters. We run it ourselves first: the same panel runs every day at two Japanese restaurants we operate overseas.</p></details>
 
   <div class="end">
     <p><b>Start by telling us what you currently compile by hand.</b></p>
@@ -538,9 +954,10 @@
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
 
-  function yen(n, lang) {
+  // 0 は「¥0」ではなく、印字されなかった罫として返す (紙の作法)
+  function yen(n) {
     var v = Math.round(n);
-    return (lang === "en" ? "¥" : "¥") + v.toLocaleString("en-US");
+    return v > 0 ? "¥" + v.toLocaleString("en-US") : '<span class="blank" role="img" aria-label="0"></span>';
   }
 
   function svg(w, h, body) {
@@ -548,7 +965,7 @@
   }
   function txt(x, y, s, opt) {
     opt = opt || {};
-    return '<text x="' + x + '" y="' + y + '" font-size="' + (opt.size || 11) + '" fill="' + (opt.fill || "#5b6069") +
+    return '<text x="' + x + '" y="' + y + '" font-family="DotGothic16, monospace" font-size="' + (opt.size || 11) + '" fill="' + (opt.fill || "#6b6658") +
       '" text-anchor="' + (opt.anchor || "start") + '"' + (opt.weight ? ' font-weight="' + opt.weight + '"' : "") + ">" + s + "</text>";
   }
 
@@ -557,52 +974,52 @@
     var W = 320, H = 186, base = 148, after = hours * (1 - AUTOMATED);
     var max = Math.max(hours, 1);
     var hb = function (v) { return Math.max(2, (v / max) * 88); };
-    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fff"/>';
-    b += '<line x1="20" y1="' + base + '" x2="' + (W - 10) + '" y2="' + base + '" stroke="#e4e6ea"/>';
+    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#faf7f0"/>';
+    b += '<line x1="20" y1="' + base + '" x2="' + (W - 10) + '" y2="' + base + '" stroke="#e2dbcb"/>';
     var bars = [
-      { x: 60, v: hours, c: "#c3c8d2", l: lang === "en" ? "Today" : "いま" },
-      { x: 190, v: after, c: "#1f9d61", l: lang === "en" ? "With the panel" : "導入後" }
+      { x: 60, v: hours, c: "#c3372a", l: lang === "en" ? "Today" : "いま" },
+      { x: 190, v: after, c: "#1b1915", l: lang === "en" ? "With the panel" : "導入後" }
     ];
     bars.forEach(function (d) {
       var h = hb(d.v);
-      b += '<rect x="' + d.x + '" y="' + (base - h) + '" width="70" height="' + h + '" fill="' + d.c + '" rx="3"/>';
-      b += txt(d.x + 35, base - h - 8, (Math.round(d.v * 10) / 10) + (lang === "en" ? " h" : " 時間"), { anchor: "middle", size: 13, weight: 700, fill: "#11141a" });
+      b += '<rect x="' + d.x + '" y="' + (base - h) + '" width="70" height="' + h + '" fill="' + d.c + '"/>';
+      b += txt(d.x + 35, base - h - 8, (Math.round(d.v * 10) / 10) + (lang === "en" ? " h" : " 時間"), { anchor: "middle", size: 13, weight: 700, fill: "#1b1915" });
       b += txt(d.x + 35, base + 18, d.l, { anchor: "middle" });
     });
     var saved = hours - after;
-    b += txt(W / 2, 20, "−" + (Math.round(saved * 10) / 10) + (lang === "en" ? " hours every month" : " 時間／月"), { anchor: "middle", size: 15, weight: 700, fill: "#1f9d61" });
-    b += txt(W / 2, H - 6, lang === "en" ? "Estimate from your inputs" : "入力値からの試算", { anchor: "middle", size: 10, fill: "#9aa0aa" });
+    var savedTxt = Math.round(saved * 10) / 10;
+    b += txt(W / 2, 20, (savedTxt > 0 ? "−" : "") + savedTxt + (lang === "en" ? " hours every month" : " 時間／月"), { anchor: "middle", size: 15, weight: 700, fill: "#1b1915" });
     return svg(W, H, b);
   }
 
   /** 折れ線 2 本: 24 か月の累計 (費用 と 削減額)、交点に回収月。 */
   function chartPayback(monthlySave, monthlyFee, lang) {
-    var W = 320, H = 186, L = 38, R = 12, T = 16, B = 30, N = 24;
+    var W = 320, H = 186, L = 58, R = 12, T = 16, B = 30, N = 24;
     var cost = [], save = [];
     for (var i = 1; i <= N; i++) { cost.push(SETUP + monthlyFee * i); save.push(monthlySave * i); }
     var max = Math.max(cost[N - 1], save[N - 1], 1);
     var x = function (i) { return L + ((W - L - R) * i) / (N - 1); };
     var y = function (v) { return T + (H - T - B) * (1 - v / max); };
     var path = function (arr) { return arr.map(function (v, i) { return (i ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); }).join(" "); };
-    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fff"/>';
+    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#faf7f0"/>';
     [0, 0.5, 1].forEach(function (f) {
       var v = max * f;
-      b += '<line x1="' + L + '" y1="' + y(v) + '" x2="' + (W - R) + '" y2="' + y(v) + '" stroke="#f0f1f3"/>';
-      b += txt(L - 6, y(v) + 4, v < 10000 ? "¥0" : "¥" + Math.round(v / 10000) + "万", { anchor: "end", size: 9, fill: "#9aa0aa" });
+      b += '<line x1="' + L + '" y1="' + y(v) + '" x2="' + (W - R) + '" y2="' + y(v) + '" stroke="#e2dbcb"/>';
+      b += txt(L - 6, y(v) + 4, v < 10000 ? "¥0" : v >= 1e8 ? "¥" + (v / 1e8).toFixed(1) + "億" : "¥" + Math.round(v / 10000) + "万", { anchor: "end", size: 11, fill: "#6b6658" });
     });
-    b += '<path d="' + path(cost) + '" fill="none" stroke="#d2554b" stroke-width="2"/>';
-    b += '<path d="' + path(save) + '" fill="none" stroke="#1f9d61" stroke-width="2.5"/>';
+    b += '<path d="' + path(cost) + '" fill="none" stroke="#c3372a" stroke-width="2"/>';
+    b += '<path d="' + path(save) + '" fill="none" stroke="#1b1915" stroke-width="2.5"/>';
     var hit = -1;
     for (var k = 0; k < N; k++) { if (save[k] >= cost[k]) { hit = k; break; } }
     if (hit >= 0) {
-      b += '<line x1="' + x(hit) + '" y1="' + T + '" x2="' + x(hit) + '" y2="' + (H - B) + '" stroke="#1f9d61" stroke-dasharray="3 3"/>';
-      b += '<circle cx="' + x(hit) + '" cy="' + y(save[hit]) + '" r="4" fill="#1f9d61"/>';
-      b += txt(Math.min(x(hit) + 6, W - 90), T + 12, (lang === "en" ? "payback: month " : "回収 ") + (hit + 1) + (lang === "en" ? "" : "か月目"), { size: 11, weight: 700, fill: "#1f9d61" });
+      b += '<line x1="' + x(hit) + '" y1="' + T + '" x2="' + x(hit) + '" y2="' + (H - B) + '" stroke="#1b1915" stroke-dasharray="3 3"/>';
+      b += '<circle cx="' + x(hit) + '" cy="' + y(save[hit]) + '" r="4" fill="#1b1915"/>';
+      b += txt(Math.min(x(hit) + 6, W - 90), T + 12, (lang === "en" ? "payback: month " : "回収 ") + (hit + 1) + (lang === "en" ? "" : "か月目"), { size: 11, weight: 700, fill: "#1b1915" });
     } else {
-      b += txt(W / 2, T + 12, lang === "en" ? "no payback within 24 months" : "24か月では回収できません", { anchor: "middle", size: 11, fill: "#d2554b" });
+      b += txt(W / 2, T + 12, lang === "en" ? "no payback within 24 months" : "24か月では回収できません", { anchor: "middle", size: 11, fill: "#c3372a" });
     }
     [{ m: 1, a: "start" }, { m: 12, a: "middle" }, { m: 24, a: "end" }].forEach(function (d) {
-      b += txt(x(d.m - 1), H - 10, d.m + (lang === "en" ? "m" : "か月"), { anchor: d.a, size: 10, fill: "#9aa0aa" });
+      b += txt(x(d.m - 1), H - 10, d.m + (lang === "en" ? "m" : "か月"), { anchor: d.a, size: 11, fill: "#6b6658" });
     });
     return svg(W, H, b);
   }
@@ -610,21 +1027,21 @@
   /** デモ: 原価率の 12 か月推移 と 目標線。 */
   function chartFoodcost(lang) {
     var vals = [34.8, 34.1, 33.4, 32.6, 31.9, 31.2, 30.8, 30.4, 30.1, 29.8, 29.6, 29.5];
-    var W = 320, H = 170, L = 34, R = 10, T = 16, B = 28, lo = 28, hi = 36;
+    var W = 320, H = 170, L = 42, R = 10, T = 16, B = 28, lo = 28, hi = 36;
     var x = function (i) { return L + ((W - L - R) * i) / (vals.length - 1); };
     var y = function (v) { return T + (H - T - B) * (1 - (v - lo) / (hi - lo)); };
-    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fff"/>';
+    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#faf7f0"/>';
     [30, 33, 36].forEach(function (v) {
-      b += '<line x1="' + L + '" y1="' + y(v) + '" x2="' + (W - R) + '" y2="' + y(v) + '" stroke="#f0f1f3"/>';
-      b += txt(L - 6, y(v) + 4, v + "%", { anchor: "end", size: 9, fill: "#9aa0aa" });
+      b += '<line x1="' + L + '" y1="' + y(v) + '" x2="' + (W - R) + '" y2="' + y(v) + '" stroke="#e2dbcb"/>';
+      b += txt(L - 6, y(v) + 4, v + "%", { anchor: "end", size: 11, fill: "#6b6658" });
     });
-    b += '<line x1="' + L + '" y1="' + y(30) + '" x2="' + (W - R) + '" y2="' + y(30) + '" stroke="#d2554b" stroke-dasharray="4 3"/>';
+    b += '<line x1="' + L + '" y1="' + y(30) + '" x2="' + (W - R) + '" y2="' + y(30) + '" stroke="#c3372a" stroke-dasharray="4 3"/>';
     var d = vals.map(function (v, i) { return (i ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); }).join(" ");
-    b += '<path d="' + d + '" fill="none" stroke="#1b5bd7" stroke-width="2.5"/>';
-    b += '<circle cx="' + x(vals.length - 1) + '" cy="' + y(vals[vals.length - 1]) + '" r="4" fill="#1b5bd7"/>';
-    b += txt(x(0), H - 8, lang === "en" ? "month 1" : "1か月目", { size: 10, fill: "#9aa0aa" });
-    b += txt(W - R, H - 8, lang === "en" ? "month 12" : "12か月目", { anchor: "end", size: 10, fill: "#9aa0aa" });
-    b += txt(W - R, T + 4, lang === "en" ? "demo (fictional)" : "デモ（架空の数値）", { anchor: "end", size: 10, fill: "#9aa0aa" });
+    b += '<path d="' + d + '" fill="none" stroke="#1b1915" stroke-width="2.5"/>';
+    b += '<circle cx="' + x(vals.length - 1) + '" cy="' + y(vals[vals.length - 1]) + '" r="4" fill="#1b1915"/>';
+    b += txt(x(0), H - 8, lang === "en" ? "month 1" : "1か月目", { size: 11, fill: "#6b6658" });
+    b += txt(W - R, H - 8, lang === "en" ? "month 12" : "12か月目", { anchor: "end", size: 11, fill: "#6b6658" });
+    b += txt(W - R, T + 4, lang === "en" ? "demo (fictional)" : "デモ（架空の数値）", { anchor: "end", size: 11, fill: "#6b6658" });
     return svg(W, H, b);
   }
 
@@ -635,17 +1052,17 @@
     var W = 320, H = 170, L = 10, R = 10, T = 22, B = 26;
     var all = real.concat(fc), max = Math.max.apply(null, all) * 1.15;
     var n = all.length, bw = (W - L - R) / n - 2;
-    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fff"/>';
+    var b = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#faf7f0"/>';
     all.forEach(function (v, i) {
       var h = ((H - T - B) * v) / max;
       b += '<rect x="' + (L + i * (bw + 2)).toFixed(1) + '" y="' + (H - B - h).toFixed(1) + '" width="' + bw.toFixed(1) +
-        '" height="' + h.toFixed(1) + '" rx="1.5" fill="' + (i < real.length ? "#12151a" : "#9fb6e6") + '"/>';
+        '" height="' + h.toFixed(1) + '" fill="' + (i < real.length ? "#1b1915" : "#c9c1ae") + '"/>';
     });
     var sx = L + real.length * (bw + 2) - 1;
-    b += '<line x1="' + sx + '" y1="' + T + '" x2="' + sx + '" y2="' + (H - B) + '" stroke="#c3c8d2" stroke-dasharray="3 3"/>';
-    b += txt(L, 14, lang === "en" ? "Actual" : "実績", { size: 10, fill: "#5b6069" });
-    b += txt(sx + 4, 14, lang === "en" ? "Forecast to month end" : "月末までの見込み", { size: 10, fill: "#5b6069" });
-    b += txt(W - R, H - 8, lang === "en" ? "demo (fictional)" : "デモ（架空の数値）", { anchor: "end", size: 10, fill: "#9aa0aa" });
+    b += '<line x1="' + sx + '" y1="' + T + '" x2="' + sx + '" y2="' + (H - B) + '" stroke="#c9c1ae" stroke-dasharray="3 3"/>';
+    b += txt(L, 14, lang === "en" ? "Actual" : "実績", { size: 11, fill: "#6b6658" });
+    b += txt(sx + 4, 14, lang === "en" ? "Forecast to month end" : "月末までの見込み", { size: 11, fill: "#6b6658" });
+    b += txt(W - R, H - 8, lang === "en" ? "demo (fictional)" : "デモ（架空の数値）", { anchor: "end", size: 11, fill: "#6b6658" });
     return svg(W, H, b);
   }
 
@@ -668,8 +1085,8 @@
     var saveMonth = labourMonth + costMonth;
     var feeMonth = MONTHLY_1 + MONTHLY_N * (shops - 1);
 
-    $('[data-o="labour"]', root).textContent = yen(labourMonth * 12, lang);
-    $('[data-o="cost"]', root).textContent = yen(costMonth * 12, lang);
+    $('[data-o="labour"]', root).innerHTML = yen(labourMonth * 12);
+    $('[data-o="cost"]', root).innerHTML = yen(costMonth * 12);
 
     var net = saveMonth - feeMonth;
     var pb = $('[data-o="payback"]', root);
@@ -683,6 +1100,7 @@
     }
     $('[data-chart="hours"]', root).innerHTML = chartHours(hours, lang);
     $('[data-chart="payback"]', root).innerHTML = chartPayback(saveMonth, feeMonth, lang);
+    nameCharts(root);
   }
 
   // 広告から来たときの経路を、そのまま申込フォームへ渡す。Apps Script が読むのは utm_campaign だけ
@@ -702,6 +1120,25 @@
     return FORM + "?" + p.toString();
   }
 
+  // レシートは必ず日付から始まる。毎朝の配信時刻 07:00 で、その日の日付を刷る
+  function stampIssue(lang) {
+    var d = new Date();
+    var p = function (n) { return (n < 10 ? "0" : "") + n; };
+    var ymd = d.getFullYear() + "/" + p(d.getMonth() + 1) + "/" + p(d.getDate());
+    $$("[data-issue]").forEach(function (el) {
+      el.textContent = (el.closest("#en") ? "ISSUED　" : "発行　") + ymd + "　07:00";
+    });
+  }
+
+  // グラフは SVG なので、見出しを読み上げ名として渡さないと支援技術には無音になる
+  function nameCharts(scope) {
+    $$("[data-chart] svg", scope).forEach(function (s) {
+      var box = s.closest(".chart");
+      var t = box && $(".ttl", box);
+      if (t) s.setAttribute("aria-label", t.textContent.trim());
+    });
+  }
+
   function setLang(lang) {
     document.getElementById("ja").hidden = lang !== "ja";
     document.getElementById("en").hidden = lang !== "en";
@@ -713,6 +1150,8 @@
     render(root, lang);
     $('[data-chart="foodcost"]', root).innerHTML = chartFoodcost(lang);
     $('[data-chart="forecast"]', root).innerHTML = chartForecast(lang);
+    stampIssue(lang);
+    nameCharts(root);
     try { localStorage.setItem("opspanel.lang", lang); } catch (e) {}
   }
 
@@ -748,5 +1187,6 @@
 })();
 </script>
 
+</div><!-- /roll -->
 </body>
 </html>
