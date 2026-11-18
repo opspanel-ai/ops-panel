@@ -1,20 +1,6 @@
-# 検索結果にはまだ載せない (中立な独自ドメインへ移すまで)。
+# 2026-11-18: 公開 URL が屋号アカウント (opspanel-ai) に移り、オーナーのハンドルが出なくなったので
+# 検索への掲載を解禁した。止めたくなったら `Disallow: /` に戻す。
 User-agent: *
-Disallow: /
-
-# ただし広告の審査とリンクプレビューのクローラだけは通す。
-# ここを塞いだままだと、広告のサムネイルが出ない・審査で「ページを確認できない」で止まる。
-User-agent: AdsBot-Google
 Allow: /
 
-User-agent: AdsBot-Google-Mobile
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: LinkedInBot
-Allow: /
+Sitemap: https://opspanel-ai.github.io/ops-panel/sitemap.xml
