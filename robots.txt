@@ -2,5 +2,7 @@
 # 検索への掲載を解禁した。止めたくなったら `Disallow: /` に戻す。
 User-agent: *
 Allow: /
+# 2026-11-20: 有料記事の購入者だけに渡す配布物。検索に載せない (リンクは note の有料部分にだけ置く)。
+Disallow: /kit/
 
 Sitemap: https://opspanel-ai.github.io/ops-panel/sitemap.xml
